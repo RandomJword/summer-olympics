@@ -22,7 +22,7 @@
       quals: [12.20, 11.60, 11.00, 10.50, 10.20], points: pts(25.4347, 18, 1.81, true),
       help: ['ALTERNATE THE RUN KEYS', 'AS FAST AS YOU CAN!', "DON'T RUN BEFORE THE GUN"] },
     { id: 'long', name: 'LONG JUMP', short: 'LONG J.', wr: '8.90', unit: 'M',
-      quals: [5.80, 6.50, 7.20, 7.80, 8.20], points: (v) => pts(0.14354, 220, 1.4)(v === null ? null : v * 100),
+      quals: [5.30, 6.50, 7.20, 7.80, 8.20], points: (v) => pts(0.14354, 220, 1.4)(v === null ? null : v * 100),
       help: ['RUN UP, PRESS JUMP AT THE BOARD', 'HOLD JUMP TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'jav', name: 'JAVELIN THROW', short: 'JAVELIN', wr: '99.72', unit: 'M',
       quals: [52, 60, 68, 75, 80], points: pts(10.14, 7, 1.08),
