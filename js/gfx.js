@@ -130,6 +130,11 @@
     { code: 'JAM', name: 'JAMAICA', c1: '#108030', c2: '#f0c000' },
     { code: 'POL', name: 'POLAND', c1: '#f0f0f0', c2: '#d01020' },
     { code: 'FIN', name: 'FINLAND', c1: '#f0f0f0', c2: '#1840c0' },
+    { code: 'THA', name: 'THAILAND', c1: '#2040a0', c2: '#d01020' },
+    { code: 'VIE', name: 'VIETNAM', c1: '#d01020', c2: '#f0d000' },
+    { code: 'GDR', name: 'EAST GERMANY', c1: '#2050c0', c2: '#f0f0f0' },
+    { code: 'HUN', name: 'HUNGARY', c1: '#d01020', c2: '#f0f0f0' },
+    { code: 'CUB', name: 'CUBA', c1: '#d01020', c2: '#2050c0' },
   ];
   G.country = (code) => G.COUNTRIES.find(c => c.code === code) || G.COUNTRIES[0];
 
@@ -151,6 +156,11 @@
       if (inner) { R(cx - 1, 0, 2, h, inner); R(0, cy - 1, w, 2, inner); }
     };
     const star = (cx, cy, c) => { R(cx, cy - 1, 1, 3, c); R(cx - 1, cy, 3, 1, c); };
+    const bigStar = (cx, cy, r, c) => {
+      const pts = [];
+      for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; pts.push([x + cx + Math.cos(a) * rr, y + cy + Math.sin(a) * rr]); }
+      ctx.fillStyle = c; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.closePath(); ctx.fill();
+    };
     const ujack = (ox, oy, ww, hh) => {
       G.rect(ctx, x + ox, y + oy, ww, hh, '#1830a0');
       G.line(ctx, x + ox, y + oy, x + ox + ww - 1, y + oy + hh - 1, '#f0f0f0', 2);
@@ -194,6 +204,13 @@
         for (let yy = 0; yy < h; yy++) { const t = Math.abs(yy - (h - 1) / 2) / ((h - 1) / 2); const half = Math.round((1 - t) * w / 2 * 0.95); R(0, yy, half, 1, '#202020'); R(w - half, yy, half, 1, '#202020'); }
         G.line(ctx, x, y, x + w - 1, y + h - 1, '#f0c000', 2); G.line(ctx, x + w - 1, y, x, y + h - 1, '#f0c000', 2); break;
       case 'POL': hs(['#f0f0f0', '#d01020']); break;
+      case 'THA': hs(['#d01020', '#f0f0f0', '#2040a0', '#2040a0', '#f0f0f0', '#d01020']); break;
+      case 'VIE': R(0, 0, w, h, '#d01020'); bigStar(w / 2, h / 2, Math.max(2, Math.round(h * 0.3)), '#f0d000'); break;
+      case 'GDR': hs(['#202020', '#d01020', '#f0c000']); G.circle(ctx, x + w / 2, y + h / 2, Math.max(1, Math.round(h * 0.18)), '#d8b030'); G.rect(ctx, x + w / 2, y + h / 2 - 1, 1, 2, '#202020'); break;
+      case 'HUN': hs(['#d01020', '#f0f0f0', '#308040']); break;
+      case 'CUB': hs(['#2040a0', '#f0f0f0', '#2040a0', '#f0f0f0', '#2040a0']);
+        for (let yy = 0; yy < h; yy++) { const half = Math.round((1 - Math.abs(yy - (h - 1) / 2) / ((h - 1) / 2)) * w * 0.42); R(0, yy, half, 1, '#d01020'); }
+        star(Math.round(w * 0.14), Math.round(h / 2), '#f0f0f0'); break;
       default: R(0, 0, w, h, '#808080');
     }
   };
@@ -276,6 +293,41 @@
     G.rect(ctx, x0, y0, x1 - x0, 1, '#f0f0f0');
     G.rect(ctx, x0, G.CPU_GROUND + 6 + oy, x1 - x0, 1, '#f0f0f0');
     G.rect(ctx, x0, y1 - 1, x1 - x0, 1, '#f0f0f0');
+  };
+
+  // Sunny stadium backdrop for the menu screens: sun, clouds, flags on the roof, crowd, banners and
+  // athletes jogging round the track. Panels drawn on top keep the text readable.
+  G.daylight = function (ctx, t) {
+    const camX = t * 1.2;
+    G.stadium(ctx, camX, 0, true, t);
+    G.rect(ctx, 0, 0, W, 16, '#5888f8');
+    // sun and drifting clouds in the strip of sky above the roof
+    G.circle(ctx, 228, 14, 9, '#ffe680'); G.circle(ctx, 228, 14, 7, '#fff8c8');
+    for (let i = 0; i < 4; i++) {
+      const cx = ((i * 83 + t * 4) % 320) - 40, cy = 4 + (i * 7) % 14;
+      G.rect(ctx, cx, cy + 3, 26, 5, '#f8f8ff'); G.rect(ctx, cx + 5, cy, 14, 4, '#f8f8ff');
+    }
+    // flags flying along the stadium roof
+    const off = ((Math.round(camX * G.PPM * 0.5) % 24) + 24) % 24;
+    for (let i = -1; i < 12; i++) {
+      const px = i * 24 - off + 12, code = G.COUNTRIES[((i + Math.floor(camX * G.PPM * 0.5 / 24)) % G.COUNTRIES.length + G.COUNTRIES.length) % G.COUNTRIES.length].code;
+      G.rect(ctx, px, 21, 1, 14, '#e0e0e0');
+      G.flag(ctx, code, px + 1, 21 + Math.round(Math.sin(t * 4 + i) * 0.6), 10, 7);
+    }
+    G.track(ctx, camX, 0);
+    // athletes of different nations jogging past
+    const runners = [['KEN', 0, 3.1, 0], ['JAM', 90, 2.6, 2], ['JPN', 180, 2.2, 0], ['GBR', 40, 1.8, 1]];
+    runners.forEach(([code, o, spd, skin], i) => {
+      const x = ((o + t * spd * G.PPM) % 300) - 22, gy = i % 2 ? G.CPU_GROUND : G.GROUND;
+      G.athlete(ctx, x, gy - 14, G.poses.run(t * spd * 2.7 + i, 0.8), G.athleteColors(code, skin));
+    });
+  };
+
+  // A stadium scoreboard panel: deep blue, slightly see-through, with a gold rim.
+  G.panel = function (ctx, x, y, w, h) {
+    G.rect(ctx, x, y, w, h, 'rgba(18,52,130,0.9)');
+    G.box(ctx, x, y, w, h, '#f8d038');
+    G.box(ctx, x + 1, y + 1, w - 2, h - 2, '#3050a0');
   };
 
   G.toScreen = function (x, y, camX, camY) {

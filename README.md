@@ -13,6 +13,7 @@ The keys copy the original arcade panel's three buttons: **RUN, ACTION, RUN**.
 | `Z` or `←` | RUN (left) |
 | `X`, `Space` or `↑` | ACTION: jump or throw. Hold it to raise the angle, release it to let go. |
 | `C` or `→` | RUN (right) |
+| `H` | Event records (top 5 of every event), from the title screen |
 | `M` | Sound on or off |
 | `P` or `Esc` | Pause during an event |
 
@@ -37,7 +38,12 @@ Points use the real decathlon scoring tables (the hammer uses the throws-pentath
 1000 points is a world-class performance. The score board after each event shows the points adding up.
 
 The top 10 scores are kept in the browser (`localStorage`) with three-letter initials, the country and the
-round reached. Your personal best for each event is kept too and shown before the event.
+round reached. Each event also keeps its own top 5: a result that makes it asks for your initials and shows
+that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
+event is shown before the event.
+
+You can represent 23 countries, including Thailand and Vietnam, and three nations with strong Summer Olympics
+records: East Germany, Hungary and Cuba.
 
 ## Music
 
