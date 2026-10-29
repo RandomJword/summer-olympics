@@ -1,4 +1,4 @@
-# Summer Athletics '83
+# Summer Olympics '83
 
 A 1983-style track and field arcade game in the spirit of Konami's *Hyper Olympic* (*Track & Field*).
 It runs in any modern browser with no build step: open `index.html`, or serve the folder with any static

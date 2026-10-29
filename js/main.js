@@ -1,6 +1,6 @@
 // Game flow: title, country select, event intro, events, score tally, game over, initials entry and leaderboard.
 (function (G) {
-  const TITLE = ['SUMMER', "ATHLETICS '83"];
+  const TITLE = ['SUMMER', "OLYMPICS '83"];
   const canvas = document.getElementById('screen');
   const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
