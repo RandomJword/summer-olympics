@@ -151,8 +151,8 @@
   // ---------- songs (all original compositions) ----------
   const DR_MARCH = 'K.h.S.h.K.h.S.h.';
   const SONGS = {
-    // Title theme: JD's sung melody, transcribed and arranged for the sound chip (G major, 3+3+2 feel).
-    title: {
+    // Running song for the events: JD's sung melody, transcribed and arranged for the sound chip (G major, 3+3+2 feel).
+    running: {
       bpm: 120, loop: true,
       voices: [
         { wave: 'p25', vol: 0.18, notes:
@@ -199,17 +199,79 @@
       ],
       drums: ['K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.S.SSSS', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K.hK.hS.', 'K.hK.hS.K...o...'],
     },
-    event: {
-      bpm: 158, loop: true,
+    // Olympic theme for the menus and score screens: JD's second recording (E-flat major).
+    anthem: {
+      bpm: 97, loop: true,
       voices: [
-        { wave: 'p50', vol: 0.11, notes:
-          'E5/2 E5/2 R/2 E5/2 G5/2 E5/2 D5/2 C5/2  D5/2 D5/2 R/2 D5/2 F5/2 D5/2 C5/2 B4/2 ' +
-          'C5/2 C5/2 R/2 C5/2 E5/2 C5/2 B4/2 A4/2  B4/4 G#4/4 B4/4 D5/4' },
-        { wave: 'triangle', vol: 0.3, gate: 0.7, notes:
-          'A2/2 A3/2 A2/2 A3/2 A2/2 A3/2 A2/2 A3/2  G2/2 G3/2 G2/2 G3/2 G2/2 G3/2 G2/2 G3/2 ' +
-          'F2/2 F3/2 F2/2 F3/2 F2/2 F3/2 F2/2 F3/2  E2/2 E3/2 E2/2 E3/2 E2/2 E3/2 E2/2 E3/2' },
+        { wave: 'p25', vol: 0.17, notes:
+          'D#5/8 A#5/8 D#5/4 F5/4 G5/4 D5/4 F5/4 F5/4 ' +
+          'F5/4 G#5/2 F5/2 D#5/4 G5/2 F5/2 D#5/4 R/4 ' +
+          'G5/6 R/2 A#5/8 D#5/4 F5/4 G5/4 D5/4 F5/4 ' +
+          'F5/4 F5/4 G#5/2 F5/2 D#5/4 G5/2 F5/2 D#5/4 ' +
+          'R/4 G5/6 R/2 A#5/8 D#5/4 F5/4 G#5/4 D#5/4 ' +
+          'F5/4 F5/4 F5/4 G#5/2 F5/2 D#5/4 G5/2 D#5/2 ' +
+          'F5/4 R/4 G5/6 R/2 A#5/8 D#5/4 F5/4 G5/4 ' +
+          'D5/4 F5/4 F5/4 F5/4 G5/2 F5/2 D#5/4 G5/2 ' +
+          'F5/2 D#5/8 F#5/2 G5/2 D#5/2 F#5/2 G#5/2 A5/2 ' +
+          'E5/2 G#5/2 E5/2 A5/2 E5/2 G5/2 F5/2 A#5/2 ' +
+          'G5/2 D#5/2 F5/2 G5/2 G#5/2 A5/2 A#5/2 G5/2 ' +
+          'A5/4 C6/6 A5/2 A#5/2 C6/6 C6/16 ' },
+        { wave: 'p50', vol: 0.09, gate: 0.8, notes:
+          'D#4/8 A#4/8 D#4/4 F4/4 G4/4 D4/4 F4/4 F4/4 ' +
+          'F4/4 G#4/2 F4/2 D#4/4 G4/2 F4/2 D#4/4 R/4 ' +
+          'G4/6 R/2 A#4/8 D#4/4 F4/4 G4/4 D4/4 F4/4 ' +
+          'F4/4 F4/4 G#4/2 F4/2 D#4/4 G4/2 F4/2 D#4/4 ' +
+          'R/4 G4/6 R/2 A#4/8 D#4/4 F4/4 G#4/4 D#4/4 ' +
+          'F4/4 F4/4 F4/4 G#4/2 F4/2 D#4/4 G4/2 D#4/2 ' +
+          'F4/4 R/4 G4/6 R/2 A#4/8 D#4/4 F4/4 G4/4 ' +
+          'D4/4 F4/4 F4/4 F4/4 G4/2 F4/2 D#4/4 G4/2 ' +
+          'F4/2 D#4/8 F#4/2 G4/2 D#4/2 F#4/2 G#4/2 A4/2 ' +
+          'E4/2 G#4/2 E4/2 A4/2 E4/2 G4/2 F4/2 A#4/2 ' +
+          'G4/2 D#4/2 F4/2 G4/2 G#4/2 A4/2 A#4/2 G4/2 ' +
+          'A4/4 C5/6 A4/2 A#4/2 C5/6 C5/16 ' },
+        { wave: 'p125', vol: 0.05, gate: 0.6, notes:
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'A#4/2 D4/2 G#4/2 D4/2 A#4/2 D4/2 G#4/2 D4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'A#4/2 D4/2 G#4/2 D4/2 A#4/2 D4/2 G#4/2 D4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'G#4/2 C4/2 D#4/2 C4/2 G#4/2 C4/2 D#4/2 C4/2 ' +
+          'A#4/2 D4/2 G#4/2 D4/2 A#4/2 D4/2 G#4/2 D4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'A#4/2 D4/2 G#4/2 D4/2 A#4/2 D4/2 G#4/2 D4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'D#4/2 G4/2 A#4/2 G4/2 D#4/2 G4/2 A#4/2 G4/2 ' +
+          'G#4/2 C4/2 D#4/2 C4/2 G#4/2 C4/2 D#4/2 C4/2 ' +
+          'A#4/2 D4/2 G#4/2 D4/2 A#4/2 D4/2 G#4/2 D4/2 ' +
+          'F4/2 A4/2 D#4/2 A4/2 F4/2 A4/2 D#4/2 A4/2 ' +
+          'D#4/16 ' },
+        { wave: 'triangle', vol: 0.32, gate: 0.8, notes:
+          'D#2/4 A#2/4 D#3/4 A#2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'A#2/4 F2/4 A#3/4 F2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'D#2/4 A#2/4 D#3/4 A#2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'A#2/4 F2/4 A#3/4 F2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'D#2/4 A#2/4 D#3/4 A#2/4 G#2/4 D#2/4 G#3/4 D#2/4 ' +
+          'A#2/4 F2/4 A#3/4 F2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'D#2/4 A#2/4 D#3/4 A#2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'A#2/4 F2/4 A#3/4 F2/4 D#2/4 A#2/4 D#3/4 A#2/4 ' +
+          'D#2/4 A#2/4 D#3/4 A#2/4 G#2/4 D#2/4 G#3/4 D#2/4 ' +
+          'A#2/4 F2/4 A#3/4 F2/4 F2/4 C2/4 F3/4 C2/4 ' +
+          'D#2/16 ' },
       ],
-      drums: ['K.h.S.hKK.h.S.h.', 'K.h.S.hKK.h.S.h.', 'K.h.S.hKK.h.S.h.', 'K.h.S.hKK.S.SSSS'],
+      drums: [
+        'K...S...K.SSSSSS', 'K...S...K.K.S...', 'K...S...K.K.S...', 'K...S...K.K.S...',
+        'K...S...K.SSSSSS', 'K...S...K.K.S...', 'K...S...K.K.S...', 'K...S...K.K.S...',
+        'K...S...K.SSSSSS', 'K...S...K.K.S...', 'K...S...K.K.S...', 'K...S...K.K.S...',
+        'K...S...K.SSSSSS', 'K...S...K.K.S...', 'K...S...K.K.S...', 'K...S...K.K.S...',
+        'K...S...K.SSSSSS', 'K...S...K.K.S...', 'K...S...K.K.S...', 'K...S...K.K.S...',
+        'K.......o.......',
+      ],
     },
     fanfare: {
       bpm: 150,
@@ -234,22 +296,6 @@
         { wave: 'p50', vol: 0.18, notes: 'G4/4 F#4/4 F4/4 E4/12' },
         { wave: 'triangle', vol: 0.3, notes: 'C3/4 B2/4 A#2/4 A2/12' },
       ],
-    },
-    gameover: {
-      bpm: 110,
-      voices: [
-        { wave: 'p25', vol: 0.18, notes: 'C5/4 G4/4 E4/4 A4/3 B4/3 A4/2 G#4/4 A#4/4 G#4/4 G4/2 F4/2 G4/12 R/4' },
-        { wave: 'triangle', vol: 0.3, notes: 'C3/8 E3/4 F3/8 F3/4 C#3/8 C#3/4 C3/16 R/4' },
-      ],
-    },
-    entry: {
-      bpm: 120, loop: true,
-      voices: [
-        { wave: 'p25', vol: 0.14, notes: 'C5/4 E5/4 G5/4 E5/4  F5/4 A5/4 G5/8  E5/4 C5/4 D5/4 B4/4  C5/12 R/4' },
-        { wave: 'p125', vol: 0.07, gate: 0.5, notes: 'G4/2 C5/2 G4/2 C5/2 G4/2 C5/2 G4/2 C5/2  A4/2 C5/2 A4/2 C5/2 B4/2 D5/2 B4/2 D5/2  G4/2 C5/2 G4/2 C5/2 G4/2 B4/2 G4/2 B4/2  G4/2 C5/2 G4/2 C5/2 G4/2 C5/2 G4/2 C5/2' },
-        { wave: 'triangle', vol: 0.28, notes: 'C3/8 C3/8  F3/8 G3/8  A2/8 G2/8  C3/16' },
-      ],
-      drums: ['K...h...S...h...', 'K...h...S...h...', 'K...h...S...h...', 'K...h...S.h.h.h.'],
     },
     record: {
       bpm: 180,
@@ -282,6 +328,8 @@
   G.audio = {
     init,
     play: (name, onEnd) => play(SONGS[name], onEnd),
+    // The menu music: starts the Olympic theme unless it is already playing.
+    theme() { if (!current || current.song !== SONGS.anthem) play(SONGS.anthem); },
     songs: SONGS, // extra tracks (see extras/) can be added here
     stop,
     sfx: new Proxy(sfx, { get: (o, k) => (...a) => { if (ac && o[k]) o[k](...a); } }),

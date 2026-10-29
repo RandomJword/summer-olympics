@@ -110,7 +110,7 @@
     }
     ev = G.makeEvent(def, game, game.round);
     go('event');
-    G.audio.play('event');
+    G.audio.play('running');
     G.audio.crowd(0.35);
   }
 
@@ -125,10 +125,11 @@
     game.results.push({ round: game.round, def, value: v, pts: p, ok, record });
     tally = { from: game.total, shown: game.total, to: game.total + p, ok, record, lastTick: 0 };
     game.total += p;
-    G.audio.play(ok ? (record ? 'record' : 'qualify') : 'fail');
+    const r = eventRank(def, v);
+    // after the result jingle, a new event top 5 brings in the Olympic theme for the initials screen
+    G.audio.play(ok ? (record ? 'record' : 'qualify') : 'fail', () => { if (state === 'entry' || state === 'evtboard') G.audio.theme(); });
     G.audio.crowd(0.15);
     ev = null;
-    const r = eventRank(def, v);
     if (r >= 0) { entry = newEntry({ mode: 'event', def, value: v, rank: r }); go('entry'); }
     else go('tally');
   }
@@ -164,7 +165,7 @@
     store.set(BOARD_KEY, board);
     highlight = entry.rank;
     entry = null;
-    G.audio.play('title');
+    G.audio.theme();
     go('board');
   }
 
@@ -180,7 +181,7 @@
     const any = inp.press || inp.runs.length > 0;
     switch (state) {
       case 'title':
-        if (inp.keys.length && !titleMusic) { titleMusic = true; G.audio.play('title'); }
+        if (inp.keys.length) G.audio.theme();
         if (inp.keys.some(k => k.code === 'KeyH')) { G.audio.sfx.select(); highlightEvt = null; go('records'); }
         else if (inp.press) { G.audio.sfx.select(); go('select'); }
         else if (st > 14) { highlight = -1; go('board'); }
@@ -211,7 +212,7 @@
           tally.shown = Math.min(tally.to, tally.shown + rate * dt * (any ? 4 : 1));
           if (time - tally.lastTick > 0.05) { G.audio.sfx.tick(); tally.lastTick = time; }
         } else if ((inp.press && st > 1) || st > 7) {
-          if (!tally.ok) { go('gameover'); G.audio.play('gameover'); }
+          if (!tally.ok) { go('gameover'); G.audio.theme(); }
           else if (game.idx === G.EVENT_LIST.length - 1) { go('roundclear'); G.audio.play('record'); G.audio.cheer(); }
           else { game.idx++; startIntro(); }
         }
@@ -224,8 +225,8 @@
         if ((inp.press && st > 1.5) || st > 6) {
           G.audio.crowd(0);
           const r = rankFor(game.total);
-          if (r >= 0) { entry = newEntry({ mode: 'game', rank: r }); G.audio.play('entry'); go('entry'); }
-          else { highlight = -1; G.audio.play('title'); go('board'); }
+          if (r >= 0) { entry = newEntry({ mode: 'game', rank: r }); go('entry'); }
+          else { highlight = -1; go('board'); }
         }
         break;
       case 'entry': {
@@ -257,11 +258,10 @@
         if ((inp.press && st > 0.5) || st > 12) { highlightEvt = null; go('title'); }
         break;
       case 'evtboard':
-        if ((inp.press && st > 0.8) || st > 6) go('tally');
+        if ((inp.press && st > 0.8) || st > 6) { G.audio.stop(); go('tally'); }
         break;
     }
   }
-  let titleMusic = false;
 
   // ---------- drawing ----------
   const pad = (n, w) => String(Math.floor(n)).padStart(w, '0');

@@ -47,8 +47,10 @@ strong Summer Olympics records: East Germany, Hungary, Cuba and the Netherlands.
 
 ## Music
 
-All music is original chiptune written for this game and played live with the Web Audio API: two pulse
-channels, a triangle bass and a noise drum channel, like a sound chip of the era.
+The music is chiptune played live with the Web Audio API: two pulse channels, a triangle bass and a noise drum
+channel, like a sound chip of the era. The Olympic theme on the menu, high score and game over screens and the
+running song during the events were both transcribed from melodies JD sang; the short jingles are original.
+The Olympic theme closely follows a well-known fanfare that may still be under copyright.
 
 ## Files
 
