@@ -319,8 +319,7 @@
     const c = G.COUNTRIES[sel];
     G.panel(ctx, 14, 146, 228, 42);
     G.flag(ctx, c.code, 22, 157, 30, 20);
-    G.text(ctx, c.name, 60, 155, '#f8f8f8');
-    G.text(ctx, 'RIVALS AWAIT IN 6 EVENTS', 60, 168, '#a0b0e0');
+    G.text(ctx, c.name, 58, 160, '#f8f8f8', { scale: 2, shadow: '#102050' });
     G.athlete(ctx, 226, 166, G.poses.wave(time), G.athleteColors(c.code, 0));
     G.rect(ctx, 0, 196, G.W, 13, 'rgba(10,26,80,0.75)');
     G.text(ctx, 'Z/C OR ARROWS: MOVE   X: SELECT', 128, 199, '#f8f8f8', { align: 'center' });
