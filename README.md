@@ -42,8 +42,8 @@ round reached. Each event also keeps its own top 5: a result that makes it asks 
 that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
 event is shown before the event.
 
-You can represent 23 countries, including Thailand and Vietnam, and three nations with strong Summer Olympics
-records: East Germany, Hungary and Cuba.
+You can represent 24 countries, listed alphabetically, including Thailand and Vietnam, and four nations with
+strong Summer Olympics records: East Germany, Hungary, Cuba and the Netherlands.
 
 ## Music
 

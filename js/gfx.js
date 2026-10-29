@@ -135,7 +135,8 @@
     { code: 'GDR', name: 'EAST GERMANY', c1: '#2050c0', c2: '#f0f0f0' },
     { code: 'HUN', name: 'HUNGARY', c1: '#d01020', c2: '#f0f0f0' },
     { code: 'CUB', name: 'CUBA', c1: '#d01020', c2: '#2050c0' },
-  ];
+    { code: 'NED', name: 'NETHERLANDS', c1: '#f08020', c2: '#f0f0f0' },
+  ].sort((a, b) => a.name.localeCompare(b.name));
   G.country = (code) => G.COUNTRIES.find(c => c.code === code) || G.COUNTRIES[0];
 
   G.athleteColors = function (code, skinTone) {
@@ -207,6 +208,7 @@
       case 'THA': hs(['#d01020', '#f0f0f0', '#2040a0', '#2040a0', '#f0f0f0', '#d01020']); break;
       case 'VIE': R(0, 0, w, h, '#d01020'); bigStar(w / 2, h / 2, Math.max(2, Math.round(h * 0.3)), '#f0d000'); break;
       case 'GDR': hs(['#202020', '#d01020', '#f0c000']); G.circle(ctx, x + w / 2, y + h / 2, Math.max(1, Math.round(h * 0.18)), '#d8b030'); G.rect(ctx, x + w / 2, y + h / 2 - 1, 1, 2, '#202020'); break;
+      case 'NED': hs(['#c01828', '#f0f0f0', '#2040a0']); break;
       case 'HUN': hs(['#d01020', '#f0f0f0', '#308040']); break;
       case 'CUB': hs(['#2040a0', '#f0f0f0', '#2040a0', '#f0f0f0', '#2040a0']);
         for (let yy = 0; yy < h; yy++) { const half = Math.round((1 - Math.abs(yy - (h - 1) / 2) / ((h - 1) / 2)) * w * 0.42); R(0, yy, half, 1, '#d01020'); }
