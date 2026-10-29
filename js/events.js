@@ -640,7 +640,8 @@
       this.p = new Runner(G.VMAX); this.p.x = this.startX;
       if (this.bar) this.say('BAR ' + this.bar.toFixed(2) + 'M', '#f8f8f8', 1.4, 'ATTEMPT ' + (this.fails + 1));
     }
-    takeoffSpeed(v) { return v <= 8 ? v * 0.7 : Math.max(1.5, 5.6 - (v - 8) * 0.7); }
+    // forgiving speed curve: anything from about 7 to 10.5 m/s converts well into lift
+    takeoffSpeed(v) { return v <= 6.5 ? v * 0.8 : v <= 9.5 ? 5.2 + (v - 6.5) * 0.15 : Math.max(2, 5.65 - (v - 9.5) * 0.5); }
     update(dt, inp) {
       this.tick(dt); this.st += dt;
       const p = this.p;
@@ -666,11 +667,11 @@
         case 'flight': {
           const f = this.fl;
           f.t += dt; f.x += f.vx * dt; f.vy -= GRAV * dt; f.y += f.vy * dt;
-          if (!this.barDown && Math.abs(f.x) < 0.15 && f.y - 0.14 < this.bar) { this.barDown = true; sfx().knock(); }
-          const floor = f.x > 0.3 ? 0.75 : 0.5;
+          if (!this.barDown && Math.abs(f.x) < 0.12 && f.y - 0.06 < this.bar) { this.barDown = true; sfx().knock(); }
+          const floor = f.x > 0.15 ? 0.75 : 0.5;
           if (f.y <= floor && f.vy < 0) {
             f.y = floor; sfx().land();
-            this.attemptOver(!this.barDown && f.x > 0.3);
+            this.attemptOver(!this.barDown && f.x > 0.15);
           }
           break;
         }
@@ -731,7 +732,7 @@
       bigMsg(ctx, this.msg);
       const fails = 'X'.repeat(this.fails) + '-'.repeat(3 - this.fails);
       hud(ctx, this, { l1: 'BEST ' + (this.best ? this.best.toFixed(2) + 'M' : '--') + '  ' + fails, r1: 'QUALIFY ' + this.qual.toFixed(2) + 'M',
-        speed: p.v, zone: [15, 17], angle: this.angle, angleHot: this.angle >= 65 && this.angle <= 78 });
+        speed: p.v, zone: [14, 21], angle: this.angle, angleHot: this.angle >= 65 && this.angle <= 78 });
     }
   }
 
