@@ -28,7 +28,7 @@
       quals: [52, 60, 68, 75, 80], points: pts(10.14, 7, 1.08),
       help: ['RUN UP, PRESS ACTION BEFORE LINE', 'HOLD TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'hurdles', name: '110M HURDLES', short: '110M H.', time: true, wr: '12.93', unit: 'SEC',
-      quals: [15.00, 14.20, 13.50, 13.00, 12.60], points: pts(5.74352, 28.5, 1.92, true),
+      quals: [17.30, 14.20, 13.50, 13.00, 12.60], points: pts(5.74352, 28.5, 1.92, true),
       help: ['ALTERNATE THE RUN KEYS', 'PRESS JUMP TO CLEAR EACH HURDLE', 'HITTING ONE SLOWS YOU DOWN'] },
     { id: 'hammer', name: 'HAMMER THROW', short: 'HAMMER', wr: '84.14', unit: 'M',
       quals: [48, 55, 61, 66, 70], points: pts(13.0449, 7, 1.05),
