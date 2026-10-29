@@ -54,7 +54,8 @@ The Olympic theme closely follows a well-known fanfare that may still be under c
 
 ## Files
 
-- `index.html`: page and canvas (256×224, scaled up with crisp pixels)
+- `index.html`: page and canvas (256×224, scaled up with crisp pixels), plus link preview tags
+- `og.png`: the 1200×630 picture shown in link previews
 - `js/font.js`: 5×7 bitmap font
 - `js/audio.js`: music sequencer, songs and sound effects
 - `js/gfx.js`: athlete figure, flags and stadium drawing
