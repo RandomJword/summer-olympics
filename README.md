@@ -37,10 +37,14 @@ six and the next round starts with tougher marks.
 Points use the real decathlon scoring tables (the hammer uses the throws-pentathlon table), so roughly
 1000 points is a world-class performance. The score board after each event shows the points adding up.
 
-The top 10 scores are kept in the browser (`localStorage`) with three-letter initials, the country and the
-round reached. Each event also keeps its own top 5: a result that makes it asks for your initials and shows
+The leaderboards are shared by everyone who plays: the top 10 scores (three-letter initials, country and round
+reached) and the top 5 of every event. Each event result that makes its top 5 asks for your initials and shows
 that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
-event is shown before the event.
+event is shown before the event and stays in your browser.
+
+The shared boards are stored by `api/scores.js`, a Vercel function that keeps one JSON file in a private Vercel
+Blob store (the store connection sets `BLOB_READ_WRITE_TOKEN`). The game keeps a copy in `localStorage` and falls
+back to it when the server can't be reached, for example when `index.html` is opened from disk.
 
 You can represent 24 countries, listed alphabetically, including Thailand and Vietnam, and four nations with
 strong Summer Olympics records: East Germany, Hungary, Cuba and the Netherlands.
@@ -61,4 +65,5 @@ The Olympic theme closely follows a well-known fanfare that may still be under c
 - `js/gfx.js`: athlete figure, flags and stadium drawing
 - `js/events.js`: physics and drawing for the six events, qualifying marks and points
 - `js/main.js`: title, country select, score board, initials entry and leaderboard
+- `api/scores.js`: shared leaderboard API (GET both boards, POST one result)
 - `tools/sim.js`: headless check of the event physics, used to tune the qualifying marks (`node tools/sim.js`)

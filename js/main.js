@@ -11,27 +11,31 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
   };
   const BOARD_KEY = 'sa83.board', BESTS_KEY = 'sa83.bests';
-  const DEFAULT_BOARD = [
+  // Placeholder entries from earlier versions. Boards now start empty, and these exact entries are
+  // removed from boards already saved in a browser; real players' results are kept.
+  const OLD_BOARD = [
     ['ACE', 9000, 'USA'], ['KEN', 8000, 'JPN'], ['ZAP', 7000, 'URS'], ['MAX', 6000, 'FRG'], ['SUE', 5000, 'GBR'],
     ['LEE', 4000, 'KOR'], ['ANA', 3000, 'BRA'], ['OLA', 2500, 'SWE'], ['ROY', 2000, 'CAN'], ['DOT', 1500, 'ITA'],
   ].map(([n, s, c]) => ({ n, s, c, r: 1 }));
-  let board = store.get(BOARD_KEY, null);
-  if (!Array.isArray(board) || !board.length) board = DEFAULT_BOARD.slice();
+  const isOldBoardRow = (r) => OLD_BOARD.some(d => d.n === r.n && d.s === r.s && d.c === r.c);
+  let board = store.get(BOARD_KEY, []);
+  if (!Array.isArray(board)) board = [];
+  board = board.filter(r => !isOldBoardRow(r));
   let bests = store.get(BESTS_KEY, {});
-  // Top 5 results of every event, seeded with modest marks so a new entry means something.
+  // Top 5 results of every event (placeholders from earlier versions are removed the same way).
   const EVENTS_KEY = 'sa83.events', NAME_KEY = 'sa83.name';
-  const SEED = {
+  const OLD_SEED = {
     dash: [10.20, 10.60, 11.00, 11.40, 11.80], long: [7.60, 7.20, 6.80, 6.40, 6.00], jav: [78, 72, 66, 60, 55],
     hurdles: [13.90, 14.40, 15.00, 15.80, 16.60], hammer: [70, 65, 60, 55, 50], high: [2.20, 2.12, 2.04, 1.96, 1.88],
   };
   let eventTop = store.get(EVENTS_KEY, null);
   if (!eventTop || typeof eventTop !== 'object') eventTop = {};
   G.EVENT_LIST.forEach((def, i) => {
-    if (!Array.isArray(eventTop[def.id])) eventTop[def.id] = SEED[def.id].map((v, k) => {
-      const d = DEFAULT_BOARD[(k * 2 + i) % DEFAULT_BOARD.length];
-      return { n: d.n, v, c: d.c };
-    });
+    const old = OLD_SEED[def.id].map((v, k) => { const d = OLD_BOARD[(k * 2 + i) % OLD_BOARD.length]; return { n: d.n, v, c: d.c }; });
+    const list = Array.isArray(eventTop[def.id]) ? eventTop[def.id] : [];
+    eventTop[def.id] = list.filter(r => !old.some(o => o.n === r.n && o.v === r.v && o.c === r.c));
   });
+  store.set(BOARD_KEY, board); store.set(EVENTS_KEY, eventTop);
   let lastName = store.get(NAME_KEY, 'AAA');
   if (typeof lastName !== 'string' || lastName.length !== 3) lastName = 'AAA';
   const ordinal = (r) => ['1ST', '2ND', '3RD'][r] || (r + 1) + 'TH';
@@ -42,6 +46,35 @@
     while (i < list.length && !G.isBetter(def, v, list[i].v)) i++;
     return i < 5 ? i : -1;
   }
+  // ---------- shared leaderboards ----------
+  // The boards live on the server (api/scores.js), so every player sees the same ones. The copy in
+  // localStorage is a cache, shown until the server answers and used when it can't be reached.
+  const API = 'api/scores';
+  let posting = 0, lastFetch = -1e9;
+  function applyShared(d) {
+    if (!d || !Array.isArray(d.board) || !d.events) return false;
+    board = d.board.slice(0, 10);
+    G.EVENT_LIST.forEach(def => { if (Array.isArray(d.events[def.id])) eventTop[def.id] = d.events[def.id].slice(0, 5); });
+    store.set(BOARD_KEY, board); store.set(EVENTS_KEY, eventTop);
+    return true;
+  }
+  function refreshBoards() {
+    const now = performance.now();
+    if (location.protocol === 'file:' || posting || now - lastFetch < 5000) return;
+    lastFetch = now;
+    fetch(API, { cache: 'no-store' }).then(r => r.ok ? r.json() : null)
+      .then(d => { if (!posting) applyShared(d); }).catch(() => {});
+  }
+  // Sends one result; onRank gets its place on the shared board (-1 if it no longer makes it).
+  function submitShared(o, onRank) {
+    if (location.protocol === 'file:') return;
+    posting++;
+    fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(o) })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { posting--; if (applyShared(d)) onRank(d.rank); })
+      .catch(() => { posting--; });
+  }
+  refreshBoards();
   const hiScore = () => Math.max(board[0] ? board[0].s : 0, game ? game.total : 0);
 
   // ---------- input ----------
@@ -86,7 +119,10 @@
   let game = null, ev = null, paused = false;
   let sel = 0, tally = null, entry = null, highlight = -1, highlightEvt = null;
 
-  function go(s) { state = s; st = 0; }
+  function go(s) {
+    state = s; st = 0;
+    if (s === 'title' || s === 'board' || s === 'records' || s === 'intro') refreshBoards();
+  }
 
   function newGame(code) {
     const others = G.COUNTRIES.filter(c => c.code !== code);
@@ -155,6 +191,8 @@
       eventTop[entry.def.id] = list.slice(0, 5);
       store.set(EVENTS_KEY, eventTop);
       highlightEvt = { id: entry.def.id, rank: entry.rank };
+      const hl = highlightEvt;
+      submitShared({ kind: 'event', id: entry.def.id, n: name, v: entry.value, c: game.country }, rank => { hl.rank = rank; });
       entry = null;
       go('evtboard');
       return;
@@ -164,6 +202,7 @@
     board = board.slice(0, 10);
     store.set(BOARD_KEY, board);
     highlight = entry.rank;
+    submitShared(Object.assign({ kind: 'board' }, row), rank => { if (state === 'board') highlight = rank; });
     entry = null;
     G.audio.theme();
     go('board');
@@ -455,6 +494,7 @@
       G.text(ctx, String(r.s), 192, y, c, { align: 'right' });
       G.text(ctx, String(r.r || 1), 224, y, c, { align: 'right' });
     });
+    if (!board.length) G.text(ctx, 'NO SCORES YET. BE THE FIRST!', 128, 110, '#e0e4f8', { align: 'center' });
     if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 200, '#f8f8f8', { align: 'center' });
   }
 
@@ -467,6 +507,7 @@
     G.EVENT_LIST.forEach((def, i) => {
       const x = i < 3 ? 10 : 132, y = 42 + (i % 3) * 54;
       G.text(ctx, def.name, x, y, '#40c0f8');
+      if (!eventTop[def.id].length) G.text(ctx, 'NO RESULTS YET', x, y + 10, '#8090c0');
       eventTop[def.id].forEach((r, k) => {
         const yy = y + 10 + k * 8;
         const hl = highlightEvt && highlightEvt.id === def.id && highlightEvt.rank === k;
