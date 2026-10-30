@@ -45,9 +45,9 @@ local size = tonumber(ARGV[4])
 if asc then redis.call('ZREMRANGEBYRANK', KEYS[1], size, -1) else redis.call('ZREMRANGEBYRANK', KEYS[1], 0, -(size + 1)) end
 if asc then return redis.call('ZRANK', KEYS[1], ARGV[2]) end
 return redis.call('ZREVRANK', KEYS[1], ARGV[2])`;
-// One-time wipe of every list (JD's reset of 30 Oct 2026): the first request after the deploy clears them.
+// One-time wipe of every list (JD's second reset of 30 Oct 2026; bump the key to wipe again): the first request after the deploy clears them.
 const RESET = ['EVAL', "if redis.call('SET', KEYS[1], '1', 'NX') then redis.call('DEL', unpack(ARGV)) end return 1",
-  1, PREFIX + 'reset:2026-10-30'].concat(LISTS.map(l => PREFIX + l.key));
+  1, PREFIX + 'reset:2026-10-30b'].concat(LISTS.map(l => PREFIX + l.key));
 const rows = (members) => (members || []).map(m => JSON.parse(m.slice(m.indexOf('|') + 1)));
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
