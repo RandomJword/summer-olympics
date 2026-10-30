@@ -23,19 +23,19 @@
       help: ['ALTERNATE THE RUN KEYS', 'AS FAST AS YOU CAN!', "DON'T RUN BEFORE THE GUN"] },
     { id: 'long', name: 'LONG JUMP', short: 'LONG J.', wr: '8.90', unit: 'M',
       quals: [5.30, 6.50, 7.20, 7.80, 8.20], points: (v) => pts(0.14354, 220, 1.4)(v === null ? null : v * 100),
-      help: ['RUN UP, PRESS JUMP AT THE BOARD', 'HOLD JUMP TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
+      help: ['RUN, JUMP AT THE BOARD', 'HOLD JUMP TO RAISE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'jav', name: 'JAVELIN THROW', short: 'JAVELIN', wr: '99.72', unit: 'M',
       quals: [52, 60, 68, 75, 80], points: pts(10.14, 7, 1.08),
-      help: ['RUN UP, PRESS ACTION BEFORE LINE', 'HOLD TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
+      help: ['RUN, THROW BEFORE THE LINE', 'HOLD TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'hurdles', name: '110M HURDLES', short: '110M H.', time: true, wr: '12.93', unit: 'SEC',
       quals: [17.30, 14.20, 13.50, 13.00, 12.60], points: pts(5.74352, 28.5, 1.92, true),
-      help: ['ALTERNATE THE RUN KEYS', 'PRESS JUMP TO CLEAR EACH HURDLE', 'HITTING ONE SLOWS YOU DOWN'] },
+      help: ['ALTERNATE THE RUN KEYS', 'PRESS JUMP FOR EACH HURDLE', 'HITTING ONE SLOWS YOU DOWN'] },
     { id: 'hammer', name: 'HAMMER THROW', short: 'HAMMER', wr: '84.14', unit: 'M',
       quals: [48, 55, 61, 66, 70], points: pts(13.0449, 7, 1.05),
-      help: ['PRESS RUN TO SPIN - IT SPEEDS UP', 'HOLD ACTION TO RAISE THE ANGLE', 'RELEASE WHEN THE ARROW IS GREEN'] },
+      help: ['PRESS RUN TO START SPINNING', 'HOLD ACTION TO RAISE ANGLE', 'LET GO WHEN ARROW IS GREEN'] },
     { id: 'high', name: 'HIGH JUMP', short: 'HIGH J.', wr: '2.38', unit: 'M',
       quals: [1.85, 1.95, 2.05, 2.12, 2.18], points: (v) => pts(0.8465, 75, 1.42)(v === null ? null : v * 100),
-      help: ['RUN UP - KEEP SPEED IN THE GREEN', 'PRESS JUMP NEAR THE BAR, HOLD', 'RELEASE AT A STEEP ANGLE'] },
+      help: ['KEEP YOUR SPEED IN THE GREEN', 'JUMP NEAR THE BAR AND HOLD', 'RELEASE AT A STEEP ANGLE'] },
   ];
   G.qualFor = (ev, round) => ev.quals[Math.min(round - 1, ev.quals.length - 1)];
   G.fmtVal = (ev, v) => {
@@ -72,17 +72,17 @@
     if (o.r1) G.text(ctx, o.r1, G.W - 4, 203, '#f8d038', { align: 'right' });
     if (o.l2) G.text(ctx, o.l2, 4, 214, '#f8f8f8');
     if (o.speed !== undefined) {
-      G.text(ctx, 'SPEED', 4, 214, '#80c0ff');
+      G.text(ctx, 'SPD', 4, 214, '#80c0ff');
       const segs = 24, n = Math.round(clamp(o.speed / G.VMAX, 0, 1) * segs);
       for (let i = 0; i < segs; i++) {
         let c = i < n ? (i < 12 ? '#40e040' : i < 19 ? '#f0e040' : '#f04040') : '#303030';
         if (o.zone && i >= o.zone[0] && i < o.zone[1] && i >= n) c = '#205020';
-        G.rect(ctx, 38 + i * 4, 214, 3, 7, c);
+        G.rect(ctx, 32 + i * 4, 214, 3, 8, c);
       }
     }
     if (o.angle !== undefined) {
-      G.text(ctx, 'ANGLE', 142, 214, '#80c0ff');
-      G.text(ctx, Math.round(o.angle) + '*', 176, 214, o.angleHot ? '#f8d038' : '#f8f8f8');
+      G.text(ctx, 'ANG', 134, 214, '#80c0ff');
+      G.text(ctx, Math.round(o.angle) + '*', 162, 214, o.angleHot ? '#f8d038' : '#f8f8f8');
     }
     if (o.r2) G.text(ctx, o.r2, G.W - 4, 214, '#c0c0c0', { align: 'right' });
   }
@@ -235,7 +235,7 @@
       }
       if (this.dist === 100 || this.dist === 110) {
         const fx = Math.round((this.dist - cam.x) * PPM());
-        if (fx > -20 && fx < G.W + 20) { G.rect(ctx, fx - 1, 120, 2, 30, '#c0c0c0'); G.rect(ctx, fx - 14, 120, 28, 9, '#202020'); G.text(ctx, 'GOAL', fx, 121, '#f8d038', { align: 'center' }); }
+        if (fx > -20 && fx < G.W + 20) { G.rect(ctx, fx - 1, 120, 2, 30, '#c0c0c0'); G.rect(ctx, fx - 17, 120, 34, 10, '#202020'); G.text(ctx, 'GOAL', fx, 121, '#f8d038', { align: 'center' }); }
       }
       const drawHurdle = (h, gy, down) => {
         const sx = Math.round((h.x - cam.x) * PPM());
@@ -276,7 +276,7 @@
       else if (this.state === 'run' && this.st < 0.8) bigMsg(ctx, { text: 'GO!', color: '#40f040', t: 1 });
       bigMsg(ctx, this.msg);
       const shown = this.finalTime !== null ? this.finalTime : this.elapsed;
-      hud(ctx, this, { l1: 'TIME ' + shown.toFixed(2), r1: 'QUALIFY ' + this.qual.toFixed(2), speed: p.v, r2: this.hurdles ? 'HIT ' + this.hs.filter(h => h.down).length : 'vs ' + this.game.cpuCountry });
+      hud(ctx, this, { l1: 'TIME ' + shown.toFixed(2), r1: 'QUAL ' + this.qual.toFixed(2), speed: p.v, r2: this.hurdles ? 'HIT ' + this.hs.filter(h => h.down).length : 'vs ' + this.game.cpuCountry });
     }
   }
 
@@ -315,7 +315,7 @@
     }
     hudField(ctx, extra) {
       hud(ctx, this, Object.assign({
-        l1: attemptsText(this.attempts), r1: 'QUALIFY ' + this.qual.toFixed(2) + 'M',
+        l1: attemptsText(this.attempts), r1: 'QUAL ' + this.qual.toFixed(2) + 'M',
         speed: this.p.v, angle: this.angle, angleHot: this.angle >= 40 && this.angle <= 50,
       }, extra || {}));
     }
@@ -613,14 +613,14 @@
       particles(ctx, this.parts, cam);
       bigMsg(ctx, this.msg);
       if (this.state === 'ready') G.text(ctx, 'PRESS RUN TO START SPINNING', G.W / 2, 60, '#f8f8f8', { align: 'center', shadow: '#000' });
-      hud(ctx, this, { l1: attemptsText(this.attempts), r1: 'QUALIFY ' + this.qual.toFixed(2) + 'M', speed: this.spin * G.VMAX, angle: this.angle, angleHot: this.angle >= 40 && this.angle <= 50 });
+      hud(ctx, this, { l1: attemptsText(this.attempts), r1: 'QUAL ' + this.qual.toFixed(2) + 'M', speed: this.spin * G.VMAX, angle: this.angle, angleHot: this.angle >= 40 && this.angle <= 50 });
       // direction dial: green when the hammer points down the sector
       const dx = 230, dy = 136, d = this.offset();
       const ok = Math.abs(d) <= SECTOR;
       G.circle(ctx, dx, dy - 1, 11, '#f8f8f8'); G.circle(ctx, dx, dy - 1, 10, '#202020');
       for (let a = -SECTOR; a <= SECTOR; a += 0.1) G.rect(ctx, dx + Math.cos(a) * 7, dy - 1 - Math.sin(a) * 7, 1, 1, '#40f040');
       if (spinning) G.line(ctx, dx, dy - 1, dx + Math.cos(d) * 8, dy - 1 - Math.sin(d) * 8, ok ? '#40f040' : '#f04040', 1);
-      G.text(ctx, 'TURN ' + Math.max(0, Math.floor(this.turns)), dx, dy + 14, '#f8f8f8', { align: 'center', shadow: '#000' });
+      G.text(ctx, 'TURN ' + Math.max(0, Math.floor(this.turns)), G.W - 4, dy + 14, '#f8f8f8', { align: 'right', shadow: '#000' });
     }
   }
 
@@ -731,7 +731,7 @@
       G.text(ctx, 'BAR ' + this.bar.toFixed(2) + 'M', G.W - 4, 20, '#f8f8f8', { align: 'right', shadow: '#000' });
       bigMsg(ctx, this.msg);
       const fails = 'X'.repeat(this.fails) + '-'.repeat(3 - this.fails);
-      hud(ctx, this, { l1: 'BEST ' + (this.best ? this.best.toFixed(2) + 'M' : '--') + '  ' + fails, r1: 'QUALIFY ' + this.qual.toFixed(2) + 'M',
+      hud(ctx, this, { l1: 'BEST ' + (this.best ? this.best.toFixed(2) + 'M' : '--') + '  ' + fails, r1: 'QUAL ' + this.qual.toFixed(2) + 'M',
         speed: p.v, zone: [14, 21], angle: this.angle, angleHot: this.angle >= 65 && this.angle <= 78 });
     }
   }

@@ -308,9 +308,9 @@
   const pad = (n, w) => String(Math.floor(n)).padStart(w, '0');
   function topHud() {
     G.rect(ctx, 0, 0, G.W, 16, '#000');
-    G.text(ctx, '1UP', 4, 1, '#f04040');
+    G.text(ctx, '1UP', 4, 0, '#f04040');
     G.text(ctx, pad(game ? (state === 'tally' ? tally.shown : game.total) : 0, 6), 4, 8, '#f8f8f8');
-    G.text(ctx, 'HI', 92, 1, '#f04040');
+    G.text(ctx, 'HI', 92, 0, '#f04040');
     G.text(ctx, pad(hiScore(), 6), 92, 8, '#f8f8f8');
     if (game) {
       G.flag(ctx, game.country, 170, 3, 15, 10);
@@ -324,23 +324,23 @@
 
   function drawTitle() {
     G.daylight(ctx, time);
-    G.panel(ctx, 16, 16, 224, 76);
-    TITLE[0].split('').forEach((ch, i) => G.text(ctx, ch, 128 - TITLE[0].length * 9 + i * 18, 20 + Math.round(Math.sin(time * 4 + i * 0.6) * 1.5), '#f8d038', { scale: 3, shadow: '#904000' }));
-    G.olympicFlag(ctx, 99, 45);
-    G.text(ctx, TITLE[1], 128, 76, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
-    G.panel(ctx, 12, 95, 232, 76);
-    G.text(ctx, '100M  LONG JUMP  JAVELIN', 128, 99, '#f8f8f8', { align: 'center' });
-    G.text(ctx, '110M HURDLES  HAMMER  HIGH JUMP', 128, 108, '#f8f8f8', { align: 'center' });
-    const keyCap = (x, y, label) => { G.box(ctx, x, y, 13, 13, '#f8f8f8', '#303060'); G.text(ctx, label, x + 4, y + 3, '#f8f8f8'); };
-    keyCap(46, 119, 'Z'); keyCap(122, 119, 'X'); keyCap(198, 119, 'C');
-    G.text(ctx, 'RUN', 52, 135, '#40f040', { align: 'center' });
-    G.text(ctx, 'JUMP/THROW', 128, 135, '#40c0f8', { align: 'center' });
-    G.text(ctx, 'RUN', 204, 135, '#40f040', { align: 'center' });
-    G.text(ctx, '<- / SPACE / ->  ALSO WORK', 128, 146, '#a0b0e0', { align: 'center' });
-    G.text(ctx, 'H RECORDS   M SOUND   P PAUSE', 128, 158, '#f8d038', { align: 'center' });
-    if (blink(2)) { G.panel(ctx, 50, 176, 156, 15); G.text(ctx, 'PRESS JUMP (X) TO START', 128, 180, '#f8f8f8', { align: 'center' }); }
-    G.rect(ctx, 0, 207, G.W, 17, 'rgba(10,26,80,0.75)');
-    G.text(ctx, '@1983 STYLE - A TRACK TRIBUTE', 128, 212, '#c0d0ff', { align: 'center' });
+    G.panel(ctx, 16, 16, 224, 82);
+    TITLE[0].split('').forEach((ch, i) => G.text(ctx, ch, 128 - TITLE[0].length * 12 + i * 24, 20 + Math.round(Math.sin(time * 4 + i * 0.6) * 1.5), '#f8d038', { scale: 3, shadow: '#904000' }));
+    G.olympicFlag(ctx, 99, 47);
+    G.text(ctx, TITLE[1], 128, 78, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
+    G.panel(ctx, 12, 101, 232, 76);
+    G.text(ctx, '100M  LONG JUMP  JAVELIN', 128, 105, '#f8f8f8', { align: 'center' });
+    G.text(ctx, 'HURDLES  HAMMER  HIGH JUMP', 128, 115, '#f8f8f8', { align: 'center' });
+    const keyCap = (x, y, label) => { G.box(ctx, x, y, 13, 13, '#f8f8f8', '#303060'); G.text(ctx, label, x + 3, y + 3, '#f8f8f8'); };
+    keyCap(46, 126, 'Z'); keyCap(122, 126, 'X'); keyCap(198, 126, 'C');
+    G.text(ctx, 'RUN', 52, 142, '#40f040', { align: 'center' });
+    G.text(ctx, 'JUMP/THROW', 128, 142, '#40c0f8', { align: 'center' });
+    G.text(ctx, 'RUN', 204, 142, '#40f040', { align: 'center' });
+    G.text(ctx, '<- / SPACE / ->  ALSO WORK', 128, 153, '#a0b0e0', { align: 'center' });
+    G.text(ctx, 'H RECORDS  M SOUND  P PAUSE', 128, 165, '#f8d038', { align: 'center' });
+    if (blink(2)) { G.panel(ctx, 30, 182, 196, 16); G.text(ctx, 'PRESS JUMP (X) TO START', 128, 186, '#f8f8f8', { align: 'center' }); }
+    G.rect(ctx, 0, 206, G.W, 18, 'rgba(10,26,80,0.75)');
+    G.text(ctx, '@1983 STYLE - A TRACK TRIBUTE', 128, 211, '#c0d0ff', { align: 'center' });
     topHud();
   }
 
@@ -359,33 +359,35 @@
     const c = G.COUNTRIES[sel];
     G.panel(ctx, 14, 146, 228, 42);
     G.flag(ctx, c.code, 22, 157, 30, 20);
-    G.text(ctx, c.name, 58, 160, '#f8f8f8', { scale: 2, shadow: '#102050' });
-    G.athlete(ctx, 226, 166, G.poses.wave(time), G.athleteColors(c.code, 0));
-    G.rect(ctx, 0, 196, G.W, 13, 'rgba(10,26,80,0.75)');
-    G.text(ctx, 'Z/C OR ARROWS: MOVE   X: SELECT', 128, 199, '#f8f8f8', { align: 'center' });
+    // the name in big letters, on two lines when it is too long for one
+    const lines = G.textWidth(c.name, 2) <= 176 || !c.name.includes(' ') ? [c.name] : c.name.split(' ');
+    lines.forEach((l, i) => G.text(ctx, l, 60, 159 - (lines.length - 1) * 9 + i * 18, '#f8f8f8', { scale: 2, shadow: '#102050' }));
+    if (lines.every(l => G.textWidth(l, 2) <= 152)) G.athlete(ctx, 226, 166, G.poses.wave(time), G.athleteColors(c.code, 0));
+    G.rect(ctx, 0, 195, G.W, 14, 'rgba(10,26,80,0.75)');
+    G.text(ctx, 'Z/C: MOVE    X: SELECT', 128, 198, '#f8f8f8', { align: 'center' });
   }
 
   function drawIntro() {
     const def = G.EVENT_LIST[game.idx];
     G.stadium(ctx, game.idx * 30 + time, 0, false, time);
     G.track(ctx, game.idx * 30 + time, 0);
-    G.panel(ctx, 16, 26, 224, 140);
+    G.panel(ctx, 8, 26, 240, 140);
     G.text(ctx, 'ROUND ' + game.round + '  EVENT ' + (game.idx + 1) + '/6', 128, 32, '#80c0ff', { align: 'center' });
     G.text(ctx, def.name, 128, 45, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
     const q = G.qualFor(def, game.round);
     const unit = def.time ? ' SEC' : '';
-    G.text(ctx, 'QUALIFY', 36, 66, '#f8d038'); G.text(ctx, fmtUnit(def, q) + unit, 220, 66, '#f8d038', { align: 'right' });
-    G.text(ctx, "WORLD RECORD '83", 36, 77, '#c0c8e8'); G.text(ctx, def.wr + (def.time ? ' SEC' : 'M'), 220, 77, '#c0c8e8', { align: 'right' });
+    G.text(ctx, 'QUALIFY', 20, 66, '#f8d038'); G.text(ctx, fmtUnit(def, q) + unit, 236, 66, '#f8d038', { align: 'right' });
+    G.text(ctx, "WORLD RECORD '83", 20, 77, '#c0c8e8'); G.text(ctx, def.wr + (def.time ? ' SEC' : 'M'), 236, 77, '#c0c8e8', { align: 'right' });
     const top = eventTop[def.id][0];
-    G.text(ctx, 'TOP SCORE', 36, 88, '#c0c8e8');
-    if (top) { G.text(ctx, fmtUnit(def, top.v) + unit, 220, 88, '#c0c8e8', { align: 'right' }); G.text(ctx, top.n, 150, 88, '#c0c8e8', { align: 'right' }); }
+    G.text(ctx, 'TOP SCORE', 20, 88, '#c0c8e8');
+    if (top) { G.text(ctx, fmtUnit(def, top.v) + unit, 236, 88, '#c0c8e8', { align: 'right' }); G.text(ctx, top.n, 140, 88, '#c0c8e8', { align: 'right' }); }
     const b = bests[def.id];
-    G.text(ctx, 'YOUR BEST', 36, 99, '#c0c8e8'); G.text(ctx, b === undefined ? '--' : fmtUnit(def, b) + unit, 220, 99, '#c0c8e8', { align: 'right' });
+    G.text(ctx, 'YOUR BEST', 20, 99, '#c0c8e8'); G.text(ctx, b === undefined ? '--' : fmtUnit(def, b) + unit, 236, 99, '#c0c8e8', { align: 'right' });
     def.help.forEach((h, i) => G.text(ctx, h, 128, 115 + i * 11, '#40f040', { align: 'center' }));
     if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 154, '#f8f8f8', { align: 'center' });
     topHud();
     G.rect(ctx, 0, 200, G.W, 24, '#000');
-    G.text(ctx, 'TOTAL ' + game.total, 4, 209, '#f8f8f8');
+    G.text(ctx, 'TOTAL ' + game.total, 4, 208, '#f8f8f8');
   }
 
   function drawTally() {
@@ -396,8 +398,8 @@
     G.flag(ctx, game.country, 12, 23, 18, 12);
     const rows = game.results.filter(r => r.round === game.round);
     const prevRounds = game.results.filter(r => r.round < game.round).reduce((a, r) => a + r.pts, 0);
-    let y = 48;
-    G.text(ctx, 'EVENT', 12, y - 9, '#80a0e0'); G.text(ctx, 'RESULT', 150, y - 9, '#80a0e0', { align: 'right' }); G.text(ctx, 'POINTS', 244, y - 9, '#80a0e0', { align: 'right' });
+    let y = 52;
+    G.text(ctx, 'EVENT', 12, y - 11, '#80a0e0'); G.text(ctx, 'RESULT', 176, y - 11, '#80a0e0', { align: 'right' }); G.text(ctx, 'POINTS', 244, y - 11, '#80a0e0', { align: 'right' });
     if (game.round > 1) { G.text(ctx, 'ROUNDS 1-' + (game.round - 1), 12, y, '#a0b0e0'); G.text(ctx, String(prevRounds), 244, y, '#a0b0e0', { align: 'right' }); y += 11; }
     G.EVENT_LIST.forEach((def, i) => {
       const r = rows[i];
@@ -405,8 +407,8 @@
       const c = !r ? '#506090' : last ? '#f8f8f8' : '#c0c8e8';
       G.text(ctx, def.name, 12, y, c);
       if (r) {
-        G.text(ctx, fmtUnit(def, r.value), 150, y, r.ok ? c : '#ff6060', { align: 'right' });
-        G.text(ctx, r.ok ? 'Q' : 'X', 158, y, r.ok ? '#40f040' : '#ff6060');
+        G.text(ctx, fmtUnit(def, r.value), 176, y, r.ok ? c : '#ff6060', { align: 'right' });
+        G.text(ctx, r.ok ? 'Q' : 'X', 182, y, r.ok ? '#40f040' : '#ff6060');
         const shownPts = last ? Math.max(0, Math.floor(tally.shown - tally.from)) : r.pts;
         G.text(ctx, String(shownPts), 244, y, c, { align: 'right' });
       } else G.text(ctx, '-', 244, y, c, { align: 'right' });
@@ -430,8 +432,8 @@
 
   function drawRoundClear() {
     G.daylight(ctx, time);
-    G.panel(ctx, 24, 40, 208, 80);
-    G.text(ctx, 'ROUND ' + game.round + ' CLEAR!', 128, 50, '#f8d038', { scale: 2, align: 'center' });
+    G.panel(ctx, 8, 40, 240, 80);
+    G.text(ctx, 'ROUND ' + game.round + ' CLEAR!', 128, 48, '#f8d038', { scale: 2, align: 'center' });
     G.text(ctx, 'QUALIFIED IN ALL 6 EVENTS', 128, 74, '#f8f8f8', { align: 'center' });
     G.text(ctx, 'NEXT ROUND: TOUGHER MARKS', 128, 88, '#40c0f8', { align: 'center' });
     G.text(ctx, 'TOTAL ' + game.total, 128, 104, '#f8d038', { align: 'center' });
@@ -444,7 +446,7 @@
   function drawGameOver() {
     G.daylight(ctx, time);
     topHud();
-    G.panel(ctx, 36, 48, 184, 128);
+    G.panel(ctx, 12, 48, 232, 128);
     G.text(ctx, 'GAME OVER', 128, 60, '#ff6060', { scale: 3, align: 'center', shadow: '#400000' });
     G.flag(ctx, game.country, 104, 94, 48, 32);
     G.text(ctx, 'FINAL SCORE ' + game.total, 128, 138, '#f8f8f8', { align: 'center' });
@@ -460,9 +462,9 @@
     if (e.mode === 'event') {
       G.text(ctx, 'NEW TOP 5!', 128, 24, '#f8d038', { scale: 2, align: 'center' });
       G.text(ctx, e.def.name + '  ' + fmtUnit(e.def, e.value), 128, 44, '#f8f8f8', { align: 'center' });
-      G.text(ctx, ord + ' PLACE IN THE EVENT RECORDS', 128, 55, '#f8f8f8', { align: 'center' });
+      G.text(ctx, ord + ' PLACE IN THE TOP 5', 128, 55, '#f8f8f8', { align: 'center' });
     } else {
-      G.text(ctx, 'CONGRATULATIONS!', 128, 24, '#f8d038', { scale: 2, align: 'center' });
+      G.text(ctx, 'HIGH SCORE!', 128, 24, '#f8d038', { scale: 2, align: 'center' });
       G.text(ctx, 'YOU PLACED ' + ord + ' WITH ' + game.total, 128, 46, '#f8f8f8', { align: 'center' });
     }
     G.text(ctx, 'ENTER YOUR INITIALS', 128, 68, '#40c0f8', { align: 'center' });
@@ -473,8 +475,8 @@
       if (i !== e.pos || blink(3)) G.text(ctx, ch, x + 12, 82, i === e.pos ? '#f8d038' : i < e.pos ? '#f8f8f8' : '#8090c0', { scale: 3, align: 'center' });
     }
     G.flag(ctx, game.country, 112, 118, 32, 20);
-    G.text(ctx, 'TYPE A LETTER, OR', 128, 148, '#c0c8e8', { align: 'center' });
-    G.text(ctx, '<- -> TO CHANGE, SPACE TO SET', 128, 158, '#c0c8e8', { align: 'center' });
+    G.text(ctx, 'TYPE A LETTER, OR', 128, 146, '#c0c8e8', { align: 'center' });
+    G.text(ctx, '<- -> CHANGE  SPACE SETS', 128, 157, '#c0c8e8', { align: 'center' });
     G.text(ctx, 'TIME ' + Math.max(0, Math.ceil(45 - st)), 128, 178, '#ff6060', { align: 'center' });
   }
 
@@ -483,19 +485,20 @@
     topHud();
     G.panel(ctx, 12, 18, 232, 200);
     G.text(ctx, 'BEST ATHLETES', 128, 22, '#f8d038', { scale: 2, align: 'center' });
-    G.text(ctx, 'RANK NAME  NATION    SCORE  RND', 128, 42, '#80a0e0', { align: 'center' });
+    G.text(ctx, 'NO', 34, 42, '#80a0e0', { align: 'right' }); G.text(ctx, 'NAME', 44, 42, '#80a0e0'); G.text(ctx, 'NATION', 82, 42, '#80a0e0');
+    G.text(ctx, 'SCORE', 190, 42, '#80a0e0', { align: 'right' }); G.text(ctx, 'RND', 232, 42, '#80a0e0', { align: 'right' });
     const cols = ['#f8d038', '#e0e0e0', '#e09050'];
     board.forEach((r, i) => {
       const y = 54 + i * 14;
       const c = i === highlight ? (blink(4) ? '#40f040' : '#f8f8f8') : (cols[i] || '#c0c8e8');
-      G.text(ctx, String(i + 1).padStart(2, ' '), 26, y, c);
-      G.text(ctx, r.n, 58, y, c);
-      G.flag(ctx, r.c, 92, y - 1, 13, 9);
-      G.text(ctx, r.c, 110, y, c);
-      G.text(ctx, String(r.s), 192, y, c, { align: 'right' });
-      G.text(ctx, String(r.r || 1), 224, y, c, { align: 'right' });
+      G.text(ctx, String(i + 1), 34, y, c, { align: 'right' });
+      G.text(ctx, r.n, 44, y, c);
+      G.flag(ctx, r.c, 82, y - 1, 13, 9);
+      G.text(ctx, r.c, 100, y, c);
+      G.text(ctx, String(r.s), 190, y, c, { align: 'right' });
+      G.text(ctx, String(r.r || 1), 232, y, c, { align: 'right' });
     });
-    if (!board.length) G.text(ctx, 'NO SCORES YET. BE THE FIRST!', 128, 110, '#e0e4f8', { align: 'center' });
+    if (!board.length) G.text(ctx, 'NO SCORES YET', 128, 110, '#e0e4f8', { align: 'center' });
     if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 200, '#f8f8f8', { align: 'center' });
   }
 
@@ -503,19 +506,20 @@
   function drawRecords() {
     G.daylight(ctx, time);
     topHud();
-    G.panel(ctx, 4, 18, 248, 204);
+    G.panel(ctx, 2, 18, 252, 204);
     G.text(ctx, 'EVENT RECORDS', 128, 22, '#f8d038', { scale: 2, align: 'center' });
     G.EVENT_LIST.forEach((def, i) => {
-      const x = i < 3 ? 10 : 132, y = 42 + (i % 3) * 54;
+      const x = i < 3 ? 6 : 134, y = 42 + (i % 3) * 54;
       G.text(ctx, def.name, x, y, '#40c0f8');
       if (!eventTop[def.id].length) G.text(ctx, 'NO RESULTS YET', x, y + 10, '#8090c0');
       eventTop[def.id].forEach((r, k) => {
-        const yy = y + 10 + k * 8;
+        const yy = y + 10 + k * 9;
         const hl = highlightEvt && highlightEvt.id === def.id && highlightEvt.rank === k;
         const c = hl ? (blink(4) ? '#40f040' : '#f8f8f8') : k === 0 ? '#f8d038' : '#e0e4f8';
-        G.text(ctx, (k + 1) + ' ' + r.n, x, yy, c);
-        G.flag(ctx, r.c, x + 32, yy, 10, 7);
-        G.text(ctx, fmtUnit(def, r.v), x + 112, yy, c, { align: 'right' });
+        G.text(ctx, String(k + 1), x, yy, c);
+        G.text(ctx, r.n, x + 12, yy, c);
+        G.flag(ctx, r.c, x + 40, yy, 10, 7);
+        G.text(ctx, fmtUnit(def, r.v), x + 114, yy, c, { align: 'right' });
       });
     });
     if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 210, '#f8f8f8', { align: 'center' });
@@ -526,18 +530,18 @@
     const def = G.EVENT_LIST.find(d => d.id === highlightEvt.id);
     G.daylight(ctx, time);
     topHud();
-    G.panel(ctx, 28, 30, 200, 140);
+    G.panel(ctx, 12, 30, 232, 140);
     G.text(ctx, def.name, 128, 36, '#f8d038', { scale: 2, align: 'center' });
     G.text(ctx, 'TOP 5', 128, 54, '#40c0f8', { align: 'center' });
     eventTop[def.id].forEach((r, k) => {
       const y = 70 + k * 16;
       const hl = highlightEvt.rank === k;
       const c = hl ? (blink(4) ? '#40f040' : '#f8f8f8') : k === 0 ? '#f8d038' : '#e0e4f8';
-      G.text(ctx, String(k + 1), 44, y, c, { scale: 1 });
-      G.text(ctx, r.n, 60, y, c);
-      G.flag(ctx, r.c, 88, y - 1, 13, 9);
-      G.text(ctx, r.c, 106, y, c);
-      G.text(ctx, fmtUnit(def, r.v), 212, y, c, { align: 'right' });
+      G.text(ctx, String(k + 1), 28, y, c);
+      G.text(ctx, r.n, 44, y, c);
+      G.flag(ctx, r.c, 76, y - 1, 13, 9);
+      G.text(ctx, r.c, 94, y, c);
+      G.text(ctx, fmtUnit(def, r.v), 228, y, c, { align: 'right' });
     });
     if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 154, '#f8f8f8', { align: 'center' });
   }

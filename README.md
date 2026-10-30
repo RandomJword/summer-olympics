@@ -62,7 +62,7 @@ The Olympic theme closely follows a well-known fanfare that may still be under c
 
 - `index.html`: page and canvas (256×224, scaled up with crisp pixels), plus link preview tags
 - `og.png`: the 1200×630 picture shown in link previews
-- `js/font.js`: 5×7 bitmap font
+- `js/font.js`: 8×8 bitmap font taken from Press Start 2P by codeman38 (SIL Open Font License 1.1, see `OFL.txt`)
 - `js/audio.js`: music sequencer, songs and sound effects
 - `js/gfx.js`: athlete figure, flags and stadium drawing
 - `js/events.js`: physics and drawing for the six events, qualifying marks and points
