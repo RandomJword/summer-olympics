@@ -17,6 +17,8 @@ const EVENTS = {
 };
 const BOARD_SIZE = 10, EVENT_SIZE = 5;
 const NAME = /^[A-Z. -]{3}$/, NATION = /^[A-Z]{3}$/;
+// Each address may post RATE_LIMIT results per RATE_WINDOW seconds, the same limit the other games use.
+const RATE_LIMIT = 10, RATE_WINDOW = 600;
 
 // One sorted set per list. Each member is "<order key>|<row JSON>": the order key makes an earlier
 // result rank ahead of a later one with the same mark (Redis orders equal scores by member).
@@ -85,6 +87,14 @@ export async function POST(request) {
   const p = parse(body);
   if (typeof p === 'string') return json({ error: p }, 400);
   const [list, score, row] = p;
+  const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
+  try {
+    const rl = PREFIX + 'rl:' + ip;
+    const [, count] = await redis('pipeline', [['SET', rl, '0', 'EX', RATE_WINDOW, 'NX'], ['INCR', rl]]);
+    if (count > RATE_LIMIT) return json({ error: 'too many' }, 429);
+  } catch (e) {
+    return json({ error: 'unavailable' }, 503);
+  }
   const key = PREFIX + list.key, member = orderKey(list.asc, row.t) + '|' + JSON.stringify(row);
   // Add, drop whatever falls off the end, then read the new entry's place and every list, all in one transaction.
   const trim = list.asc ? ['ZREMRANGEBYRANK', key, list.size, -1] : ['ZREMRANGEBYRANK', key, 0, -(list.size + 1)];
