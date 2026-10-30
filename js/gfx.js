@@ -135,6 +135,55 @@
     return { hand: S(haB), handFar: S(haA), shoulder: S(sh), head: hp };
   };
 
+  // High jumper doing a Fosbury Flop, drawn from keyframes over the flight (u from 0 at take-off to 1 on the mat).
+  // Angles are screen directions (0 = right, +PI/2 = down). The jumper turns their back to the bar: head first and
+  // face up, hips arched highest over the bar, knees hanging, then the legs kick up and over as they land on their back.
+  const FLOP = [
+    { u: 0, torso: -1.57, thigh: 1.75, shin: 1.9, drive: 0.25, driveShin: 1.6, arm: -1.3 },
+    { u: 0.3, torso: -0.55, thigh: 2.2, shin: 1.6, drive: 2.0, driveShin: 1.5, arm: 2.3 },
+    { u: 0.5, torso: 0.25, thigh: 2.75, shin: 1.75, drive: 2.65, driveShin: 1.65, arm: 3.4 },
+    { u: 0.72, torso: 0.45, thigh: 3.75, shin: 3.85, drive: 3.65, driveShin: 3.75, arm: 3.9 },
+    { u: 1, torso: 0.7, thigh: 4.55, shin: 4.65, drive: 4.45, driveShin: 4.55, arm: 4.3 },
+  ];
+  G.flopper = function (ctx, hx, hy, u, col) {
+    let i = 0;
+    while (i < FLOP.length - 2 && u > FLOP[i + 1].u) i++;
+    const a = FLOP[i], b = FLOP[i + 1], t = Math.max(0, Math.min(1, (u - a.u) / (b.u - a.u)));
+    const k = {};
+    for (const key in a) k[key] = a[key] + (b[key] - a[key]) * t;
+    const dir = (ang, l) => [Math.cos(ang) * l, Math.sin(ang) * l];
+    const add = (p, q) => [p[0] + q[0], p[1] + q[1]];
+    const ln = (p, q, c, th) => G.line(ctx, hx + p[0], hy + p[1], hx + q[0], hy + q[1], c, th);
+    const H0 = [0, 0];
+    const neck = dir(k.torso, L.torso), sh = dir(k.torso, L.torso - 1);
+    // far (take-off) leg, darker
+    const kneeA = dir(k.thigh, L.thigh), footA = add(kneeA, dir(k.shin, L.shin));
+    ln(H0, kneeA, col.skinD, 2); ln(kneeA, footA, col.skinD, 2);
+    G.rect(ctx, hx + footA[0] - 1, hy + footA[1] - 1, 2, 2, col.shoeD);
+    // far arm
+    const elA = add(sh, dir(k.arm + 0.3, L.ua)), haA = add(elA, dir(k.arm + 0.5, L.fa));
+    ln(sh, elA, col.skinD, 2); ln(elA, haA, col.skinD, 2);
+    // body
+    ln(H0, neck, col.shirt, 4);
+    ln(H0, dir(k.torso, 2), col.shorts, 4);
+    // head: hair on the back of the head (toward the bar), eye on the face side (up)
+    const hc = add(neck, dir(k.torso, 3));
+    const hp = [Math.round(hx + hc[0]), Math.round(hy + hc[1])];
+    G.rect(ctx, hp[0] - 2, hp[1] - 2, 5, 5, col.skin);
+    const back = dir(k.torso + Math.PI / 2, 2), crown = dir(k.torso, 2);
+    G.rect(ctx, Math.round(hp[0] + back[0]) - 1, Math.round(hp[1] + back[1]) - 1, 3, 3, col.hair);
+    G.rect(ctx, Math.round(hp[0] + crown[0]) - 1, Math.round(hp[1] + crown[1]) - 1, 3, 3, col.hair);
+    const eye = dir(k.torso - Math.PI / 2, 1.5);
+    G.rect(ctx, Math.round(hp[0] + eye[0] + crown[0] * 0.3), Math.round(hp[1] + eye[1] + crown[1] * 0.3), 1, 1, '#000');
+    // near (drive) leg and arm
+    const kneeB = dir(k.drive, L.thigh), footB = add(kneeB, dir(k.driveShin, L.shin));
+    ln(H0, dir(k.drive, 3), col.shorts, 3);
+    ln(H0, kneeB, col.skin, 2); ln(kneeB, footB, col.skin, 2);
+    G.rect(ctx, hx + footB[0] - 1, hy + footB[1] - 1, 3, 2, col.shoe);
+    const elB = add(sh, dir(k.arm, L.ua)), haB = add(elB, dir(k.arm + 0.2, L.fa));
+    ln(sh, elB, col.skin, 2); ln(elB, haB, col.skin, 2);
+  };
+
   // ---------- countries & flags ----------
   // c1 = singlet colour, c2 = shorts colour
   G.COUNTRIES = [

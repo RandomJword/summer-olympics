@@ -717,15 +717,14 @@
         for (let x = -4; x < 6; x += 2) G.rect(ctx, bx + x, by, 2, 1, (x / 2) % 2 ? '#f8f8f8' : '#d02020');
       } else G.rect(ctx, bx + 6, G.GROUND - 9, 12, 1, '#f8f8f8');
       // athlete
-      let pose, hip, rot = 0;
+      let pose, hip;
       if (this.state === 'ready') { pose = G.poses.stand(); hip = [p.x, 0]; }
       else if (this.state === 'run' || (this.state === 'show' && !this.fl)) { pose = p.v > 0.3 ? p.pose() : G.poses.stand(); hip = [p.x, 0]; }
       else if (this.state === 'angle') { pose = G.poses.gather(); hip = [this.x0, 0]; }
       else {
         const f = this.fl; const u = clamp(f.t / 0.9, 0, 1);
-        pose = G.poses.flop(u); rot = -Math.PI / 2 * clamp(f.t / 0.4, 0, 1) - u * 0.6;
         const [sx, sy] = G.toScreen(f.x, f.y, cam.x, 0);
-        G.athlete(ctx, sx, sy, pose, this.col, rot, true);
+        G.flopper(ctx, sx, sy, u, this.col);
         hip = null;
       }
       if (hip) { const [sx, sy] = G.toScreen(hip[0], hip[1], cam.x, 0); G.athlete(ctx, sx, sy - 14, pose, this.col); if (this.state === 'angle') LongJump.prototype.angleArrow.call(this, ctx, sx, sy - 10); }
