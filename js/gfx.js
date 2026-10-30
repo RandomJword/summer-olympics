@@ -24,6 +24,32 @@
     }
   };
 
+  // A pixel ring (outline circle) of radius r and thickness th.
+  G.ring = function (ctx, cx, cy, r, th, c) {
+    ctx.fillStyle = c;
+    for (let y = -r; y <= r; y++) for (let x = -r; x <= r; x++) {
+      const d = Math.sqrt(x * x + y * y);
+      if (d <= r + 0.3 && d > r - th + 0.3) ctx.fillRect(cx + x, cy + y, 1, 1);
+    }
+  };
+  // The five Olympic rings on a white flag, 58x27, top-left at (x, y).
+  G.olympicFlag = function (ctx, x, y) {
+    ctx.fillStyle = '#f8f8f8'; ctx.fillRect(x, y, 58, 27);
+    ctx.fillStyle = '#c0c0c8'; ctx.fillRect(x, y + 27, 58, 1);
+    const r = 7, cx = x + 13, cy = y + 10, dx = 16;
+    const top = [['#0081c8', 0], ['#202020', 1], ['#ee334e', 2]], low = [['#fcb131', 0], ['#00a651', 1]];
+    low.forEach(([c, i]) => G.ring(ctx, cx + dx / 2 + i * dx, cy + 7, r, 2, c));
+    top.forEach(([c, i]) => G.ring(ctx, cx + i * dx, cy, r, 2, c));
+    // interlock: each lower ring passes over its left neighbour at the top-right crossing
+    low.forEach(([c, i]) => {
+      const lx = cx + dx / 2 + i * dx, ly = cy + 7;
+      ctx.fillStyle = c;
+      for (let yy = -r; yy <= -2; yy++) for (let xx = 0; xx <= r; xx++) {
+        const d = Math.sqrt(xx * xx + yy * yy);
+        if (d <= r + 0.3 && d > r - 2 + 0.3) ctx.fillRect(lx + xx, ly + yy, 1, 1);
+      }
+    });
+  };
   G.circle = function (ctx, cx, cy, r, c) {
     ctx.fillStyle = c;
     for (let y = -r; y <= r; y++) {
