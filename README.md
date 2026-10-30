@@ -39,7 +39,8 @@ Points use the real decathlon scoring tables (the hammer uses the throws-pentath
 
 The leaderboards are shared by everyone who plays: the top 10 scores (three-letter initials, country and round
 reached) and the top 5 of every event. The first result that makes a board asks for your initials; after that the
-game remembers them in your browser and saves later results under them without asking. A new entry shows
+game remembers them in your browser and saves later results under them without asking. One set of initials can
+hold at most 3 places on the score board and on each event's top 5. A new entry shows
 that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
 event is shown before the event and stays in your browser.
 
