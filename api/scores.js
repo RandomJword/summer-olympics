@@ -69,23 +69,10 @@ function parse(b) {
   return 'bad kind';
 }
 
-// One-time cleanup JD asked for on 2026-10-30: drop every JMD result saved before then. Later JMD results stay.
-const PURGE_NAME = 'JMD', PURGE_BEFORE = Date.parse('2026-10-30T02:15:00Z');
-async function purge(results) {
-  const cmds = [];
-  results.forEach((members, i) => (members || []).forEach(m => {
-    const r = JSON.parse(m.slice(m.indexOf('|') + 1));
-    if (r.n === PURGE_NAME && r.t < PURGE_BEFORE) cmds.push(['ZREM', PREFIX + LISTS[i].key, m]);
-  }));
-  if (!cmds.length) return results;
-  await redis('pipeline', cmds);
-  return redis('pipeline', LISTS.map(rangeCmd));
-}
-
 export async function GET() {
   if (!URL_ || !TOKEN) return json({ error: 'no database' }, 503);
   try {
-    return json(boards(await purge(await redis('pipeline', LISTS.map(rangeCmd)))));
+    return json(boards(await redis('pipeline', LISTS.map(rangeCmd))));
   } catch (e) {
     return json({ error: 'unavailable' }, 503);
   }
