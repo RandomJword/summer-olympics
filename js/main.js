@@ -46,7 +46,20 @@
     const list = eventTop[def.id];
     let i = 0;
     while (i < list.length && !G.isBetter(def, v, list[i].v)) i++;
-    return i < 5 ? i : -1;
+    return i < 5 ? capRank(list, i) : -1;
+  }
+  // One set of initials keeps at most PER_PLAYER places on a list (the server enforces the same rule):
+  // a result that would be their fourth or worse does not place, and a better one pushes out their worst.
+  const PER_PLAYER = 3;
+  const placesAbove = (list, i, name) => list.slice(0, i).filter(row => row.n === name).length;
+  function capRank(list, i, name) {
+    if (name === undefined) { if (!knownName) return i; name = lastName; }
+    return placesAbove(list, i, name) < PER_PLAYER ? i : -1;
+  }
+  function insertCapped(list, i, row, size) {
+    list.splice(i, 0, row);
+    let seen = 0;
+    return list.filter(r => r.n !== row.n || ++seen <= PER_PLAYER).slice(0, size);
   }
   // ---------- shared leaderboards ----------
   // The boards live on the server (api/scores.js), so every player sees the same ones. The copy in
@@ -181,29 +194,27 @@
     if (score <= 0) return -1;
     let i = 0;
     while (i < board.length && board[i].s >= score) i++;
-    return i < 10 ? i : -1;
+    return i < 10 ? capRank(board, i) : -1;
   }
 
   function finishEntry() {
     const name = (entry.letters.join('').replace(/ +$/, '') || '---').padEnd(3, ' ').slice(0, 3);
     lastName = name; store.set(NAME_KEY, name); knownName = true;
     if (entry.mode === 'event') {
-      const list = eventTop[entry.def.id];
-      list.splice(entry.rank, 0, { n: name, v: entry.value, c: game.country });
-      eventTop[entry.def.id] = list.slice(0, 5);
+      const list = eventTop[entry.def.id], rank = capRank(list, entry.rank, name);
+      if (rank >= 0) eventTop[entry.def.id] = insertCapped(list, rank, { n: name, v: entry.value, c: game.country }, 5);
       store.set(EVENTS_KEY, eventTop);
-      highlightEvt = { id: entry.def.id, rank: entry.rank };
+      highlightEvt = { id: entry.def.id, rank };
       const hl = highlightEvt;
       submitShared({ kind: 'event', id: entry.def.id, n: name, v: entry.value, c: game.country }, rank => { hl.rank = rank; });
       entry = null;
       go('evtboard');
       return;
     }
-    const row = { n: name, s: game.total, c: game.country, r: game.round };
-    board.splice(entry.rank, 0, row);
-    board = board.slice(0, 10);
+    const row = { n: name, s: game.total, c: game.country, r: game.round }, rank = capRank(board, entry.rank, name);
+    if (rank >= 0) board = insertCapped(board, rank, row, 10);
     store.set(BOARD_KEY, board);
-    highlight = entry.rank;
+    highlight = rank;
     submitShared(Object.assign({ kind: 'board' }, row), rank => { if (state === 'board') highlight = rank; });
     entry = null;
     G.audio.theme();
