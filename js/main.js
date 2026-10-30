@@ -322,22 +322,21 @@
 
   function drawTitle() {
     G.daylight(ctx, time);
-    G.panel(ctx, 16, 19, 224, 56);
-    const cols = ['#f04040', '#f8d038', '#40f040', '#40c0f8', '#f080f0'];
-    TITLE[0].split('').forEach((ch, i) => G.text(ctx, ch, 128 - TITLE[0].length * 9 + i * 18, 23 + Math.round(Math.sin(time * 4 + i * 0.6) * 1.5), cols[(i + Math.floor(time * 3)) % cols.length], { scale: 3 }));
-    G.text(ctx, TITLE[1], 128, 50, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
-    ['#2060f0', '#f8d038', '#202020', '#40c040', '#f04040'].forEach((c, i) => G.rect(ctx, 48 + i * 32, 68, 30, 2, c));
-    G.panel(ctx, 12, 79, 232, 76);
-    G.text(ctx, '100M  LONG JUMP  JAVELIN', 128, 83, '#f8f8f8', { align: 'center' });
-    G.text(ctx, '110M HURDLES  HAMMER  HIGH JUMP', 128, 92, '#f8f8f8', { align: 'center' });
+    G.panel(ctx, 16, 16, 224, 76);
+    TITLE[0].split('').forEach((ch, i) => G.text(ctx, ch, 128 - TITLE[0].length * 9 + i * 18, 20 + Math.round(Math.sin(time * 4 + i * 0.6) * 1.5), '#f8d038', { scale: 3, shadow: '#904000' }));
+    G.olympicFlag(ctx, 99, 45);
+    G.text(ctx, TITLE[1], 128, 76, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
+    G.panel(ctx, 12, 95, 232, 76);
+    G.text(ctx, '100M  LONG JUMP  JAVELIN', 128, 99, '#f8f8f8', { align: 'center' });
+    G.text(ctx, '110M HURDLES  HAMMER  HIGH JUMP', 128, 108, '#f8f8f8', { align: 'center' });
     const keyCap = (x, y, label) => { G.box(ctx, x, y, 13, 13, '#f8f8f8', '#303060'); G.text(ctx, label, x + 4, y + 3, '#f8f8f8'); };
-    keyCap(46, 103, 'Z'); keyCap(122, 103, 'X'); keyCap(198, 103, 'C');
-    G.text(ctx, 'RUN', 52, 119, '#40f040', { align: 'center' });
-    G.text(ctx, 'JUMP/THROW', 128, 119, '#40c0f8', { align: 'center' });
-    G.text(ctx, 'RUN', 204, 119, '#40f040', { align: 'center' });
-    G.text(ctx, '<- / SPACE / ->  ALSO WORK', 128, 130, '#a0b0e0', { align: 'center' });
-    G.text(ctx, 'H RECORDS   M SOUND   P PAUSE', 128, 142, '#f8d038', { align: 'center' });
-    if (blink(2)) { G.panel(ctx, 50, 159, 156, 15); G.text(ctx, 'PRESS JUMP (X) TO START', 128, 163, '#f8f8f8', { align: 'center' }); }
+    keyCap(46, 119, 'Z'); keyCap(122, 119, 'X'); keyCap(198, 119, 'C');
+    G.text(ctx, 'RUN', 52, 135, '#40f040', { align: 'center' });
+    G.text(ctx, 'JUMP/THROW', 128, 135, '#40c0f8', { align: 'center' });
+    G.text(ctx, 'RUN', 204, 135, '#40f040', { align: 'center' });
+    G.text(ctx, '<- / SPACE / ->  ALSO WORK', 128, 146, '#a0b0e0', { align: 'center' });
+    G.text(ctx, 'H RECORDS   M SOUND   P PAUSE', 128, 158, '#f8d038', { align: 'center' });
+    if (blink(2)) { G.panel(ctx, 50, 176, 156, 15); G.text(ctx, 'PRESS JUMP (X) TO START', 128, 180, '#f8f8f8', { align: 'center' }); }
     G.rect(ctx, 0, 207, G.W, 17, 'rgba(10,26,80,0.75)');
     G.text(ctx, '@1983 STYLE - A TRACK TRIBUTE', 128, 212, '#c0d0ff', { align: 'center' });
     topHud();
