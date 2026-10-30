@@ -382,20 +382,31 @@
     const def = G.EVENT_LIST[game.idx];
     G.stadium(ctx, game.idx * 30 + time, 0, false, time);
     G.track(ctx, game.idx * 30 + time, 0);
-    G.panel(ctx, 8, 26, 240, 140);
-    G.text(ctx, 'ROUND ' + game.round + '  EVENT ' + (game.idx + 1) + '/6', 128, 32, '#80c0ff', { align: 'center' });
-    G.text(ctx, def.name, 128, 45, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
+    G.panel(ctx, 8, 18, 240, 180);
+    G.text(ctx, 'ROUND ' + game.round + '  EVENT ' + (game.idx + 1) + '/6', 128, 23, '#80c0ff', { align: 'center' });
+    G.text(ctx, def.name, 128, 34, '#f8f8f8', { scale: 2, align: 'center', shadow: '#2040a0' });
+    // this game's targets and players
     const q = G.qualFor(def, game.round);
     const unit = def.time ? ' SEC' : '';
-    G.text(ctx, 'QUALIFY', 20, 66, '#f8d038'); G.text(ctx, fmtUnit(def, q) + unit, 236, 66, '#f8d038', { align: 'right' });
-    G.text(ctx, "WORLD RECORD '83", 20, 77, '#c0c8e8'); G.text(ctx, def.wr + (def.time ? ' SEC' : 'M'), 236, 77, '#c0c8e8', { align: 'right' });
+    G.text(ctx, 'QUALIFY', 16, 56, '#f8d038'); G.text(ctx, fmtUnit(def, q) + unit, 240, 56, '#f8d038', { align: 'right' });
     const top = eventTop[def.id][0];
-    G.text(ctx, 'TOP SCORE', 20, 88, '#c0c8e8');
-    if (top) { G.text(ctx, fmtUnit(def, top.v) + unit, 236, 88, '#c0c8e8', { align: 'right' }); G.text(ctx, top.n, 140, 88, '#c0c8e8', { align: 'right' }); }
+    G.text(ctx, 'TOP PLAYER', 16, 66, '#c0c8e8');
+    if (top) { G.text(ctx, fmtUnit(def, top.v) + unit, 240, 66, '#c0c8e8', { align: 'right' }); G.text(ctx, top.n, 152, 66, '#c0c8e8', { align: 'right' }); }
     const b = bests[def.id];
-    G.text(ctx, 'YOUR BEST', 20, 99, '#c0c8e8'); G.text(ctx, b === undefined ? '--' : fmtUnit(def, b) + unit, 236, 99, '#c0c8e8', { align: 'right' });
-    def.help.forEach((h, i) => G.text(ctx, h, 128, 115 + i * 11, '#40f040', { align: 'center' }));
-    if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 154, '#f8f8f8', { align: 'center' });
+    G.text(ctx, 'YOUR BEST', 16, 76, '#c0c8e8'); G.text(ctx, b === undefined ? '--' : fmtUnit(def, b) + unit, 240, 76, '#c0c8e8', { align: 'right' });
+    // the real world record of the day, on its own plaque so it is not mistaken for a player's score
+    const r = def.record;
+    G.rect(ctx, 12, 88, 232, 62, '#2a1c08');
+    G.box(ctx, 12, 88, 232, 62, '#c89838'); G.box(ctx, 13, 89, 230, 60, '#5a4018');
+    G.rect(ctx, 52, 85, 152, 9, '#2a1c08');
+    G.text(ctx, "1983 WORLD RECORD", 128, 86, '#f8d038', { align: 'center' });
+    G.flag(ctx, r.nat, 20, 99, 24, 16);
+    G.text(ctx, r.by, 52, 98, '#f8f0d8');
+    G.text(ctx, def.wr + (def.time ? ' SEC' : 'M'), 52, 108, '#f8d038', { scale: 2, shadow: '#000' });
+    G.text(ctx, r.at, 128, 128, '#d8c090', { align: 'center' });
+    G.text(ctx, r.fact, 128, 139, '#a8e0f8', { align: 'center' });
+    def.help.forEach((h, i) => G.text(ctx, h, 128, 156 + i * 10, '#40f040', { align: 'center' }));
+    if (blink(2)) G.text(ctx, 'PRESS JUMP', 128, 188, '#f8f8f8', { align: 'center' });
     topHud();
     G.rect(ctx, 0, 200, G.W, 24, '#000');
     G.text(ctx, 'TOTAL ' + game.total, 4, 208, '#f8f8f8');

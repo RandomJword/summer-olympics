@@ -16,24 +16,31 @@
     const d = track ? B - v : v - B;
     return d > 0 ? Math.floor(A * Math.pow(d, C)) : 0;
   };
+  // wr and record are the real world record as it stood at the end of 1983 (shown before each event).
   // Points use the real decathlon scoring tables (hammer uses the throws-pentathlon table).
   G.EVENT_LIST = [
     { id: 'dash', name: '100M DASH', short: '100M', time: true, wr: '9.93', unit: 'SEC',
+      record: { by: 'CALVIN SMITH', nat: 'USA', at: 'COLORADO SPRINGS, JUL 1983', fact: "ENDED JIM HINES' 15-YEAR RUN" },
       quals: [12.20, 11.60, 11.00, 10.50, 10.20], points: pts(25.4347, 18, 1.81, true),
       help: ['ALTERNATE THE RUN KEYS', 'AS FAST AS YOU CAN!', "DON'T RUN BEFORE THE GUN"] },
     { id: 'long', name: 'LONG JUMP', short: 'LONG J.', wr: '8.90', unit: 'M',
+      record: { by: 'BOB BEAMON', nat: 'USA', at: 'MEXICO CITY, OCT 1968', fact: 'BEAT THE OLD RECORD BY 55CM' },
       quals: [5.30, 6.50, 7.20, 7.80, 8.20], points: (v) => pts(0.14354, 220, 1.4)(v === null ? null : v * 100),
       help: ['RUN, JUMP AT THE BOARD', 'HOLD JUMP TO RAISE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'jav', name: 'JAVELIN THROW', short: 'JAVELIN', wr: '99.72', unit: 'M',
+      record: { by: 'TOM PETRANOFF', nat: 'USA', at: 'LOS ANGELES, MAY 1983', fact: "TOO FAR! SPEAR REMADE IN '86" },
       quals: [52, 60, 68, 75, 80], points: pts(10.14, 7, 1.08),
       help: ['RUN, THROW BEFORE THE LINE', 'HOLD TO RAISE THE ANGLE', 'RELEASE NEAR 45* - 3 TRIES'] },
     { id: 'hurdles', name: '110M HURDLES', short: '110M H.', time: true, wr: '12.93', unit: 'SEC',
+      record: { by: 'RENALDO NEHEMIAH', nat: 'USA', at: 'ZURICH, AUG 1981', fact: 'FIRST MAN UNDER 13 SECONDS' },
       quals: [17.30, 14.20, 13.50, 13.00, 12.60], points: pts(5.74352, 28.5, 1.92, true),
       help: ['ALTERNATE THE RUN KEYS', 'PRESS JUMP FOR EACH HURDLE', 'HITTING ONE SLOWS YOU DOWN'] },
     { id: 'hammer', name: 'HAMMER THROW', short: 'HAMMER', wr: '84.14', unit: 'M',
+      record: { by: 'SERGEY LITVINOV', nat: 'URS', at: 'MOSCOW, JUN 1983', fact: "WORLD CHAMPION, HELSINKI '83" },
       quals: [48, 55, 61, 66, 70], points: pts(13.0449, 7, 1.05),
       help: ['PRESS RUN TO START SPINNING', 'HOLD ACTION TO RAISE ANGLE', 'LET GO WHEN ARROW IS GREEN'] },
     { id: 'high', name: 'HIGH JUMP', short: 'HIGH J.', wr: '2.38', unit: 'M',
+      record: { by: 'ZHU JIANHUA', nat: 'CHN', at: 'SHANGHAI, SEP 1983', fact: 'SET AT 20, FLOP STYLE' },
       quals: [1.85, 1.95, 2.05, 2.12, 2.18], points: (v) => pts(0.8465, 75, 1.42)(v === null ? null : v * 100),
       help: ['KEEP YOUR SPEED IN THE GREEN', 'JUMP NEAR THE BAR AND HOLD', 'RELEASE AT A STEEP ANGLE'] },
   ];
