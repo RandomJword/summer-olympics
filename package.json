@@ -2,8 +2,5 @@
   "name": "summer-olympics-83",
   "private": true,
   "type": "module",
-  "description": "Summer Olympics '83: static game plus one serverless function for the shared leaderboards",
-  "dependencies": {
-    "@vercel/blob": "2.8.2"
-  }
+  "description": "Summer Olympics '83: static game plus one serverless function for the shared leaderboards"
 }

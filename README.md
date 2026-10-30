@@ -42,8 +42,9 @@ reached) and the top 5 of every event. Each event result that makes its top 5 as
 that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
 event is shown before the event and stays in your browser.
 
-The shared boards are stored by `api/scores.js`, a Vercel function that keeps one JSON file in a private Vercel
-Blob store (the store connection sets `BLOB_READ_WRITE_TOKEN`). The game keeps a copy in `localStorage` and falls
+The shared boards are stored by `api/scores.js`, a Vercel function that keeps each list as a sorted set in an
+Upstash Redis database (connecting the database to the Vercel project sets `KV_REST_API_URL` and
+`KV_REST_API_TOKEN`). The game keeps a copy in `localStorage` and falls
 back to it when the server can't be reached, for example when `index.html` is opened from disk.
 
 You can represent 24 countries, listed alphabetically, including Thailand and Vietnam, and four nations with
