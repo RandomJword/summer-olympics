@@ -38,7 +38,8 @@ Points use the real decathlon scoring tables (the hammer uses the throws-pentath
 1000 points is a world-class performance. The score board after each event shows the points adding up.
 
 The leaderboards are shared by everyone who plays: the top 10 scores (three-letter initials, country and round
-reached) and the top 5 of every event. Each event result that makes its top 5 asks for your initials and shows
+reached) and the top 5 of every event. The first result that makes a board asks for your initials; after that the
+game remembers them in your browser and saves later results under them without asking. A new entry shows
 that event's board. Press `H` on the title screen to see the top 5 of every event. Your personal best for each
 event is shown before the event and stays in your browser.
 

@@ -36,6 +36,8 @@
     eventTop[def.id] = list.filter(r => !old.some(o => o.n === r.n && o.v === r.v && o.c === r.c));
   });
   store.set(BOARD_KEY, board); store.set(EVENTS_KEY, eventTop);
+  // Once a player has typed their initials, later results are saved under them without asking again.
+  let knownName = typeof store.get(NAME_KEY, null) === 'string';
   let lastName = store.get(NAME_KEY, 'AAA');
   if (typeof lastName !== 'string' || lastName.length !== 3) lastName = 'AAA';
   const ordinal = (r) => ['1ST', '2ND', '3RD'][r] || (r + 1) + 'TH';
@@ -166,7 +168,7 @@
     G.audio.play(ok ? (record ? 'record' : 'qualify') : 'fail', () => { if (state === 'entry' || state === 'evtboard') G.audio.theme(); });
     G.audio.crowd(0.15);
     ev = null;
-    if (r >= 0) { entry = newEntry({ mode: 'event', def, value: v, rank: r }); go('entry'); }
+    if (r >= 0) { entry = newEntry({ mode: 'event', def, value: v, rank: r }); if (knownName) finishEntry(); else go('entry'); }
     else go('tally');
   }
 
@@ -184,7 +186,7 @@
 
   function finishEntry() {
     const name = (entry.letters.join('').replace(/ +$/, '') || '---').padEnd(3, ' ').slice(0, 3);
-    lastName = name; store.set(NAME_KEY, name);
+    lastName = name; store.set(NAME_KEY, name); knownName = true;
     if (entry.mode === 'event') {
       const list = eventTop[entry.def.id];
       list.splice(entry.rank, 0, { n: name, v: entry.value, c: game.country });
@@ -264,7 +266,7 @@
         if ((inp.press && st > 1.5) || st > 6) {
           G.audio.crowd(0);
           const r = rankFor(game.total);
-          if (r >= 0) { entry = newEntry({ mode: 'game', rank: r }); go('entry'); }
+          if (r >= 0) { entry = newEntry({ mode: 'game', rank: r }); if (knownName) finishEntry(); else go('entry'); }
           else { highlight = -1; go('board'); }
         }
         break;
@@ -595,5 +597,5 @@
 
   // for debugging and automated checks
   G.debug = { get state() { return state; }, get game() { return game; }, get ev() { return ev; }, board: () => board,
-    go: (s) => go(s), newGame, startEvent: (i) => { game.idx = i; startEvent(); } };
+    go: (s) => go(s), newGame, startEvent: (i) => { game.idx = i; startEvent(); }, endEvent: () => endEvent() };
 })(window.G = window.G || {});
