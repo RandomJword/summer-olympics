@@ -613,7 +613,10 @@
       particles(ctx, this.parts, cam);
       bigMsg(ctx, this.msg);
       if (this.state === 'ready') G.text(ctx, 'PRESS RUN TO START SPINNING', G.W / 2, 60, '#f8f8f8', { align: 'center', shadow: '#000' });
-      hud(ctx, this, { l1: attemptsText(this.attempts), r1: 'QUAL ' + this.qual.toFixed(2) + 'M', speed: this.spin * G.VMAX, angle: this.angle, angleHot: this.angle >= 40 && this.angle <= 50 });
+      // live distance from the front of the circle while the hammer flies, as for the javelin
+      const flying = b && !b.landed && !b.cage;
+      hud(ctx, this, { l1: attemptsText(this.attempts), r1: 'QUAL ' + this.qual.toFixed(2) + 'M', speed: this.spin * G.VMAX, angle: this.angle, angleHot: this.angle >= 40 && this.angle <= 50,
+        r2: flying ? Math.max(0, b.x - 1.07).toFixed(1) + 'M' : undefined });
       // direction dial: green when the hammer points down the sector
       const dx = 230, dy = 136, d = this.offset();
       const ok = Math.abs(d) <= SECTOR;
