@@ -48,18 +48,20 @@
     while (i < list.length && !G.isBetter(def, v, list[i].v)) i++;
     return i < 5 ? capRank(list, i) : -1;
   }
-  // One set of initials keeps at most PER_PLAYER places on a list (the server enforces the same rule):
-  // a result that would be their fourth or worse does not place, and a better one pushes out their worst.
-  const PER_PLAYER = 3;
+  // One set of initials keeps at most 3 places on the score board and 2 on each event list (the server enforces the same rule):
+  // a result that would be past that limit does not place, and a better one pushes out their worst.
+  const BOARD_CAP = 3, EVENT_CAP = 2;
+  const capFor = (list) => list === board ? BOARD_CAP : EVENT_CAP;
   const placesAbove = (list, i, name) => list.slice(0, i).filter(row => row.n === name).length;
   function capRank(list, i, name) {
     if (name === undefined) { if (!knownName) return i; name = lastName; }
-    return placesAbove(list, i, name) < PER_PLAYER ? i : -1;
+    return placesAbove(list, i, name) < capFor(list) ? i : -1;
   }
   function insertCapped(list, i, row, size) {
+    const cap = capFor(list);
     list.splice(i, 0, row);
     let seen = 0;
-    return list.filter(r => r.n !== row.n || ++seen <= PER_PLAYER).slice(0, size);
+    return list.filter(r => r.n !== row.n || ++seen <= cap).slice(0, size);
   }
   // ---------- shared leaderboards ----------
   // The boards live on the server (api/scores.js), so every player sees the same ones. The copy in

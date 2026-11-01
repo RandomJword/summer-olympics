@@ -2,7 +2,8 @@
 // Upstash Redis database. Connecting the database to the Vercel project sets KV_REST_API_URL and
 // KV_REST_API_TOKEN (or the UPSTASH_REDIS_REST_* names); the service talks to its REST API with fetch.
 // GET returns both boards. POST adds one result, if it makes the board, and returns the boards and its rank.
-// One set of initials holds at most PER_PLAYER places on any list; a better result pushes out their worst one.
+// One set of initials holds at most `cap` places on a list (3 on the score board, 2 on each event's top 5);
+// a better result pushes out their worst one.
 
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -16,20 +17,20 @@ const EVENTS = {
   hammer: { time: false, min: 0.01, max: 95 },
   high: { time: false, min: 0.5, max: 2.6 },
 };
-const BOARD_SIZE = 10, EVENT_SIZE = 5, PER_PLAYER = 3;
+const BOARD_SIZE = 10, EVENT_SIZE = 5, BOARD_CAP = 3, EVENT_CAP = 2;
 const NAME = /^[A-Z. -]{3}$/, NATION = /^[A-Z]{3}$/;
 // Each address may post RATE_LIMIT results per RATE_WINDOW seconds, the same limit the other games use.
 const RATE_LIMIT = 10, RATE_WINDOW = 600;
 
 // One sorted set per list. Each member is "<order key>|<row JSON>": the order key makes an earlier
 // result rank ahead of a later one with the same mark (Redis orders equal scores by member).
-const LISTS = [{ key: 'board', size: BOARD_SIZE, asc: false }]
-  .concat(Object.keys(EVENTS).map(id => ({ key: 'event:' + id, id, size: EVENT_SIZE, asc: EVENTS[id].time })));
+const LISTS = [{ key: 'board', size: BOARD_SIZE, cap: BOARD_CAP, asc: false }]
+  .concat(Object.keys(EVENTS).map(id => ({ key: 'event:' + id, id, size: EVENT_SIZE, cap: EVENT_CAP, asc: EVENTS[id].time })));
 const orderKey = (asc, t) => String(asc ? t : 1e13 - t).padStart(13, '0');
 const rangeCmd = (l) => ['ZRANGE', PREFIX + l.key, 0, l.size - 1].concat(l.asc ? [] : ['REV']);
-// Adds a member, then drops the same player's places past PER_PLAYER and whatever falls off the end,
+// Adds a member, then drops the same player's places past the list's cap and whatever falls off the end,
 // and returns the new member's rank (nil if it did not stay). KEYS[1] = list; ARGV = score, member,
-// '"n":"<name>"' tag, list size, 1 if lowest first, PER_PLAYER.
+// '"n":"<name>"' tag, list size, 1 if lowest first, cap.
 const ADD = `
 redis.call('ZADD', KEYS[1], ARGV[1], ARGV[2])
 local asc = ARGV[5] == '1'
@@ -48,6 +49,21 @@ return redis.call('ZREVRANK', KEYS[1], ARGV[2])`;
 // One-time wipe of every list (JD's second reset of 30 Oct 2026; bump the key to wipe again): the first request after the deploy clears them.
 const RESET = ['EVAL', "if redis.call('SET', KEYS[1], '1', 'NX') then redis.call('DEL', unpack(ARGV)) end return 1",
   1, PREFIX + 'reset:2026-10-30b'].concat(LISTS.map(l => PREFIX + l.key));
+// One-time trim of the event lists to EVENT_CAP places per player (JD, 1 Nov 2026), on the first request
+// after the deploy. KEYS[1] = guard key, then the lists; ARGV = cap, then 1 for each list ranked lowest first.
+const TRIM_EVENTS = LISTS.slice(1);
+const TRIM = ['EVAL', `
+if not redis.call('SET', KEYS[1], '1', 'NX') then return 0 end
+for i = 2, #KEYS do
+  local all = ARGV[i] == '1' and redis.call('ZRANGE', KEYS[i], 0, -1) or redis.call('ZRANGE', KEYS[i], 0, -1, 'REV')
+  local seen = {}
+  for _, m in ipairs(all) do
+    local n = string.match(m, '"n":"(...)"') or ''
+    seen[n] = (seen[n] or 0) + 1
+    if seen[n] > tonumber(ARGV[1]) then redis.call('ZREM', KEYS[i], m) end
+  end
+end
+return 1`, TRIM_EVENTS.length + 1, PREFIX + 'trim:2026-11-01'].concat(TRIM_EVENTS.map(l => PREFIX + l.key), [EVENT_CAP], TRIM_EVENTS.map(l => l.asc ? 1 : 0));
 const rows = (members) => (members || []).map(m => JSON.parse(m.slice(m.indexOf('|') + 1)));
 
 const json = (body, status = 200) => new Response(JSON.stringify(body), {
@@ -96,7 +112,7 @@ function parse(b) {
 export async function GET() {
   if (!URL_ || !TOKEN) return json({ error: 'no database' }, 503);
   try {
-    return json(boards((await redis('pipeline', [RESET].concat(LISTS.map(rangeCmd)))).slice(1)));
+    return json(boards((await redis('pipeline', [RESET, TRIM].concat(LISTS.map(rangeCmd)))).slice(2)));
   } catch (e) {
     return json({ error: 'unavailable' }, 503);
   }
@@ -112,7 +128,7 @@ export async function POST(request) {
   const ip = (request.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'unknown';
   try {
     const rl = PREFIX + 'rl:' + ip;
-    const [, , count] = await redis('pipeline', [RESET, ['SET', rl, '0', 'EX', RATE_WINDOW, 'NX'], ['INCR', rl]]);
+    const [, , , count] = await redis('pipeline', [RESET, TRIM, ['SET', rl, '0', 'EX', RATE_WINDOW, 'NX'], ['INCR', rl]]);
     if (count > RATE_LIMIT) return json({ error: 'too many' }, 429);
   } catch (e) {
     return json({ error: 'unavailable' }, 503);
@@ -122,7 +138,7 @@ export async function POST(request) {
   // The add runs as one script, so two posts at once cannot leave a player with too many places.
   try {
     const out = await redis('pipeline', [
-      ['EVAL', ADD, 1, key, score, member, tag, list.size, list.asc ? 1 : 0, PER_PLAYER],
+      ['EVAL', ADD, 1, key, score, member, tag, list.size, list.asc ? 1 : 0, list.cap],
     ].concat(LISTS.map(rangeCmd)));
     const rank = out[0] === null || out[0] === undefined ? -1 : out[0];
     return json(Object.assign(boards(out.slice(1)), { rank }));
